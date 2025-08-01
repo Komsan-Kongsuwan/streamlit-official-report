@@ -26,12 +26,22 @@ def check_login():
         else:
             st.error("❌ Incorrect username or password")
 
-# --- Auth State ---
+# --- Auth Setup ---
 if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
+    st.session_state.authenticated = False
 
-if not st.session_state["authenticated"]:
-    check_login()
+if not st.session_state.authenticated:
+    st.title("🔐 Login Required")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login_button = st.button("Login")
+
+    if login_button:
+        if username == USERNAME and password == PASSWORD:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("❌ Incorrect username or password")
     st.stop()
 
 # --- Main App ---
