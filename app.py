@@ -5,8 +5,36 @@ import calendar
 import io
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
 
+# --- App config ---
 st.set_page_config(page_title="Monthly Report Processor", layout="wide")
+
+# --- Credentials ---
+USERNAME = "admin"
+PASSWORD = "report123"
+
+# --- Login Function ---
+def check_login():
+    st.title("🔐 Login Required")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username == USERNAME and password == PASSWORD:
+            st.session_state["authenticated"] = True
+            st.experimental_rerun()
+        else:
+            st.error("❌ Incorrect username or password")
+
+# --- Auth State ---
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+if not st.session_state["authenticated"]:
+    check_login()
+    st.stop()
+
+# --- Main App ---
 st.title("📊 Monthly Report Generator")
 
 uploaded_files = st.file_uploader(
@@ -67,22 +95,18 @@ if uploaded_files:
     st.success("✅ Processing Complete!")
     st.dataframe(df_result.head())
 
-    # Step 1: Save with xlsxwriter (basic export)
+    # Step 1: Save to temp file
     buffer = io.BytesIO()
-    temp_file_name = "temp_report.xlsx"  # Temporary file in memory
+    temp_file_name = "temp_report.xlsx"
 
     with pd.ExcelWriter(temp_file_name, engine='openpyxl') as writer:
         df_result.to_excel(writer, index=False, sheet_name="Report")
 
-    # Step 2: Re-open with openpyxl for formatting
+    # Step 2: Reopen and format with openpyxl
     wb = load_workbook(temp_file_name)
     ws = wb["Report"]
 
-    # Map column names to column letters
     col_index_map = {col: idx + 1 for idx, col in enumerate(df_result.columns)}
-    from openpyxl.utils import get_column_letter
-
-    # Format amount columns (month columns + Grand Total)
     month_names = [calendar.month_abbr[i] for i in range(1, 13)]
     number_cols = month_names + ['Grand Total']
 
@@ -93,30 +117,31 @@ if uploaded_files:
             for cell in ws[col_letter][1:]:  # skip header
                 cell.number_format = '#,##0_);[Red](#,##0)'
 
-    # Set column width for 'Item Detail'
     item_col_letter = get_column_letter(col_index_map['Item Detail'])
     ws.column_dimensions[item_col_letter].width = 35
 
-    # Center-align 'Year'
     year_col_letter = get_column_letter(col_index_map['Year'])
     for cell in ws[year_col_letter][1:]:
         cell.alignment = Alignment(horizontal='center')
 
-    # Freeze first row (after header)
     ws.freeze_panes = 'A2'
-
-    # Add AutoFilter
     ws.auto_filter.ref = ws.dimensions
 
-    # Step 3: Save formatted workbook to in-memory buffer
+    # Step 3: Save final file to buffer
     final_buffer = io.BytesIO()
     wb.save(final_buffer)
     final_buffer.seek(0)
 
-    # Step 4: Streamlit download
+    # Step 4: Download
     st.download_button(
         label="📥 Download Excel Report (Formatted)",
         data=final_buffer,
         file_name="official_monthly_report.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
+# --- Logout ---
+st.markdown("---")
+if st.button("🚪 Logout"):
+    st.session_state["authenticated"] = False
+    st.experimental_rerun()
