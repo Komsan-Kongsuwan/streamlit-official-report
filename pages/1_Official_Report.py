@@ -1,3 +1,5 @@
+# 1_Official_Report.py
+
 import streamlit as st
 import pandas as pd
 import calendar
@@ -5,6 +7,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 import io
+import plotly.express as px
 
 st.title("📊 Official Monthly Report")
 
@@ -62,7 +65,8 @@ if st.session_state.show_uploader:
 
             final_columns = ['Site', 'Item Detail', 'Year'] + list(month_map.values()) + ['Grand Total']
             pivot_df = pivot_df.reindex(columns=final_columns)
-            return pivot_df
+
+            return df_final, pivot_df
 
         def format_and_download(df_result):
             buffer = io.BytesIO()
@@ -78,9 +82,10 @@ if st.session_state.show_uploader:
 
             for col in number_cols:
                 col_idx = col_index_map.get(col)
-                col_letter = get_column_letter(col_idx)
-                for cell in ws[col_letter][1:]:
-                    cell.number_format = '#,##0_);[Red](#,##0)'
+                if col_idx:
+                    col_letter = get_column_letter(col_idx)
+                    for cell in ws[col_letter][1:]:
+                        cell.number_format = '#,##0_);[Red](#,##0)'
 
             if 'Item Detail' in col_index_map:
                 ws.column_dimensions[get_column_letter(col_index_map['Item Detail'])].width = 35
@@ -96,13 +101,29 @@ if st.session_state.show_uploader:
             final_buffer.seek(0)
 
             st.download_button(
-                label="📥 Download Official Monthly Report",
+                label="📅 Download Official Monthly Report",
                 data=final_buffer,
                 file_name="official_monthly_report.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
-        df_result = generate_official_report(uploaded_files)
+        df_raw, df_result = generate_official_report(uploaded_files)
         st.success("✅ Official Report Ready")
         st.dataframe(df_result.head())
         format_and_download(df_result)
+
+        # --- Optional Chart Section ---
+        st.subheader("📈 Report Visualization")
+        selected_site = st.selectbox("Select Site", sorted(df_raw['Site'].unique()))
+
+        site_df = df_raw[df_raw['Site'] == selected_site]
+        site_df_grouped = site_df.groupby(['Year', 'Month'], as_index=False).agg({'Amount': 'sum'})
+        site_df_grouped['Month'] = site_df_grouped['Month'].astype(int)
+        site_df_grouped['Month Name'] = site_df_grouped['Month'].apply(lambda x: calendar.month_abbr[x])
+
+        chart_df = site_df_grouped.sort_values(by=['Year', 'Month'])
+        chart_df['Period'] = chart_df['Year'].astype(str) + '-' + chart_df['Month Name']
+
+        fig = px.bar(chart_df, x='Period', y='Amount', title=f"Monthly Revenue for Site: {selected_site}", text_auto='.2s')
+        fig.update_layout(xaxis_title="Period", yaxis_title="Amount", xaxis_tickangle=-45)
+        st.plotly_chart(fig, use_container_width=True)
