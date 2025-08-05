@@ -127,7 +127,7 @@ if st.session_state.show_uploader:
             y='Amount',
             title=f"Monthly Revenue for Site: {selected_site}",
         )
-        fig.update_traces(mode='lines+markers+text', text=chart_df['Amount'].round(2), textposition='top center')
+        fig.update_traces(mode='lines+markers')
         fig.update_layout(xaxis_title="Period", yaxis_title="Amount")
 
         st.plotly_chart(fig, use_container_width=True)
