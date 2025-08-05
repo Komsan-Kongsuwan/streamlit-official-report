@@ -124,6 +124,6 @@ if st.session_state.show_uploader:
         chart_df = site_df_grouped.sort_values(by=['Year', 'Month'])
         chart_df['Period'] = chart_df['Year'].astype(str) + '-' + chart_df['Month Name']
 
-        fig = px.bar(chart_df, x='Period', y='Amount', title=f"Monthly Revenue for Site: {selected_site}", text_auto='.2s')
+        fig = px.line(chart_df, x='Period', y='Amount', title=f"Monthly Revenue for Site: {selected_site}", text_auto='.2s')
         fig.update_layout(xaxis_title="Period", yaxis_title="Amount", xaxis_tickangle=-45)
         st.plotly_chart(fig, use_container_width=True)
