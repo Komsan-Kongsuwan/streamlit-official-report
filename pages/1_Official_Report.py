@@ -106,7 +106,6 @@ if st.session_state.show_uploader:
 
         df_result, df_raw = generate_official_report(uploaded_files)
         st.success("✅ Official Report Ready")
-        st.dataframe(df_result.head())
         format_and_download(df_result)
 
         # ✅ Add Line Chart
