@@ -1,13 +1,35 @@
 import streamlit as st
 
-st.set_page_config(page_title="Monthly Report Hub", layout="wide")
-st.title("📁 Monthly Report Generator")
+# --- Auth ---
+USERNAME = "admin"
+PASSWORD = "report123"
 
-uploaded = st.file_uploader("📤 Upload .xlsx files", type="xlsx", accept_multiple_files=True)
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 
-if uploaded:
-    st.session_state.uploaded_files = uploaded
-    st.success("✅ Files uploaded successfully! Now choose a report page from the sidebar.")
+if not st.session_state.authenticated:
+    st.title("🔐 Login Required")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login = st.button("Login")
+    if login:
+        if username == USERNAME and password == PASSWORD:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("❌ Incorrect credentials")
+    st.stop()
 
-if "uploaded_files" not in st.session_state:
-    st.warning("⚠️ Please upload Excel files before proceeding to the report pages.")
+# --- Upload Page ---
+st.title("📁 Upload Excel Files")
+st.markdown("Please upload your monthly Excel reports (multiple files allowed).")
+
+#uploaded = st.file_uploader("Upload .xlsx files", type="xlsx", accept_multiple_files=True)
+
+#if uploaded:
+#    st.session_state.uploaded_files = uploaded
+#    st.success("✅ Files uploaded successfully! Now go to a report page (left menu).")
+
+if st.button("🚪 Logout"):
+    st.session_state.authenticated = False
+    st.rerun()
