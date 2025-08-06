@@ -38,8 +38,7 @@ fig_line = px.line(
     markers=True
 )
 
-#fig_line.update_layout(xaxis_title = "", yaxis_title="Amount")
-fig_line.update_layout(yaxis=dict(range=[0, df_raw['Amount'].max()]))
+fig_line.update_layout(xaxis_title = "", yaxis_title="Amount")
 st.plotly_chart(fig_line, use_container_width=True)
 
 # --- Bar Chart: Total Revenue by Item Detail ---
