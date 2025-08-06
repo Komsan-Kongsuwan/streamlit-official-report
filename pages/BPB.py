@@ -30,7 +30,7 @@ line_df = (
     .sum()
 )
 
-fig_line = px.bar(
+fig_line = px.line(
     line_df,
     x='Period',
     y='Amount',
@@ -45,14 +45,14 @@ st.plotly_chart(fig_line, use_container_width=True)
 st.markdown("## 📊 Total Revenue by Item Detail (Bar Chart)")
 bar_df = (
     df_raw[df_raw['Item Detail'].isin(selected_items)]
-    .groupby(['Item Detail'], as_index=False)['Amount']
+    .groupby(['Year'], as_index=False)['Amount']
     .sum()
     .sort_values(by='Amount', ascending=False)
 )
 
 fig_bar = px.bar(
     bar_df,
-    x='Period',
+    x='Year',
     y='Amount',
     title="Total Revenue by Item Detail",
     text_auto='.2s'
