@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.title("📈 Chart Visualization Revenue")
+st.markdown(
+    """
+    <h1 style='margin-bottom: 0.5rem;'>📈 Chart Visualization Revenue</h1>
+    """,
+    unsafe_allow_html=True
+)
 
 if "official_data" not in st.session_state:
     st.warning("⚠️ Official data not found. Generate the official report first.")
