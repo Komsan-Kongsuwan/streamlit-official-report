@@ -16,7 +16,6 @@ df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
 df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
 
 # --- Line Chart: Trend Comparison ---
-st.markdown("## 📉 Trend Comparison (Line Chart)")
 items = sorted(df_raw['Item Detail'].dropna().unique())
 selected_items = st.multiselect("Select items to compare", items, default=["Revenue"])
 
@@ -42,7 +41,6 @@ fig_line.update_layout(xaxis_title="Period", yaxis_title="Amount")
 st.plotly_chart(fig_line, use_container_width=True)
 
 # --- Bar Chart: Total Revenue by Item Detail ---
-st.markdown("## 📊 Total Revenue by Item Detail (Bar Chart)")
 bar_df = (
     df_raw[df_raw['Item Detail'].isin(selected_items)]
     .groupby(['Year'], as_index=False)['Amount']
