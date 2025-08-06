@@ -52,7 +52,7 @@ bar_df = (
 
 fig_bar = px.bar(
     bar_df,
-    x='Item Detail',
+    x='Period',
     y='Amount',
     title="Total Revenue by Item Detail",
     text_auto='.2s'
