@@ -104,5 +104,5 @@ if uploaded_files:
     format_and_download(df_pivot)
 
     # 👉 Save to session for use in Chart page
-    st.dataframe(df_raw.head())
+    df_raw = df_raw[df_raw['Item Detail'] == "Revenue"]
     st.session_state["official_data"] = df_raw
