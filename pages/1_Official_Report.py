@@ -7,10 +7,11 @@ from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 import io
+import plotly.express as px
 
 st.title("📊 Official Monthly Report")
 
-# แสดง uploader ทันที
+# ✅ แสดง uploader โดยตรง
 uploaded_files = st.file_uploader("📤 Upload .xlsx files", type="xlsx", accept_multiple_files=True)
 
 if uploaded_files:
@@ -57,7 +58,7 @@ if uploaded_files:
         final_columns = ['Site', 'Item Detail', 'Year'] + list(month_map.values()) + ['Grand Total']
         pivot_df = pivot_df.reindex(columns=final_columns)
 
-        return pivot_df
+        return pivot_df, df_final
 
     def format_and_download(df_result):
         buffer = io.BytesIO()
@@ -98,6 +99,28 @@ if uploaded_files:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-    df_result = generate_official_report(uploaded_files)
+    df_pivot, df_raw = generate_official_report(uploaded_files)
     st.success("✅ Official Report Ready")
-    format_and_download(df_result)
+    format_and_download(df_pivot)
+
+    # 👉 Save to session for use in Chart page
+    st.session_state["official_data"] = df_raw
+
+    # 📈 Show chart
+    st.markdown("### 📈 Trend by Site")
+    df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
+    df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
+    df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
+    site_list = sorted(df_raw['Site'].dropna().unique())
+    selected_site = st.selectbox("Select site to display trend", site_list)
+    chart_df = df_raw[df_raw['Site'] == selected_site].groupby(['Period'], as_index=False)['Amount'].sum()
+
+    fig = px.line(
+        chart_df,
+        x='Period',
+        y='Amount',
+        title=f"Monthly Revenue for Site: {selected_site}"
+    )
+    fig.update_traces(mode='lines+markers')
+    fig.update_layout(xaxis_title="Period", yaxis_title="Amount")
+    st.plotly_chart(fig, use_container_width=True)
