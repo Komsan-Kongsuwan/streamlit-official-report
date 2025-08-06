@@ -37,8 +37,16 @@ fig_line = px.line(
     title="Monthly Trend",
     markers=True
 )
+
+fig_line.update_layout(
+    xaxis_title="",
+    yaxis_title="Amount",
+    xaxis=dict(range=[plot_df['Period'].min(), plot_df['Period'].max()])
+)
+
+
 #fig_line.update_layout(xaxis_title = "", yaxis_title="Amount")
-fig_line.update_layout(yaxis=dict(range=[0, plot_df['Amount'].max()]))
+#fig_line.update_layout(yaxis=dict(range=[0, plot_df['Amount'].max()]))
 st.plotly_chart(fig_line, use_container_width=True)
 
 # --- Bar Chart: Total Revenue by Item Detail ---
