@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.title("📈 Chart Visualization")
+st.title("📈 Chart Visualization By Item Detail")
 
 # --- Load session data ---
 if "official_data" not in st.session_state:
@@ -17,7 +17,7 @@ df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
 
 # --- Line Chart: Trend Comparison ---
 items = sorted(df_raw['Item Detail'].dropna().unique())
-selected_items = st.multiselect("Select items to compare", items, default=["Revenue"])
+selected_items = st.multiselect("Select Item Detail", items, default=["Revenue"])
 
 if not selected_items:
     st.info("Select at least one item.")
