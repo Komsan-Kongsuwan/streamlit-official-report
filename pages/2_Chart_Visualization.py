@@ -13,26 +13,30 @@ df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
 df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
 df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
 
-st.markdown("## Trend Comparison")
-sites = sorted(df_raw['Site'].dropna().unique())
-selected_sites = st.multiselect("Select sites to compare", sites, default=["BPA"])
+st.markdown("## Trend Comparison by Item Detail")
 
-if not selected_sites:
-    st.info("Select at least one site.")
+# เปลี่ยนเป็นกรองตาม Item Detail
+items = sorted(df_raw['Item Detail'].dropna().unique())
+selected_items = st.multiselect("Select Item(s) to compare", items, default=["Revenue"])
+
+if not selected_items:
+    st.info("Select at least one item.")
     st.stop()
 
+# กรองจาก Item Detail
 plot_df = (
-    df_raw[df_raw['Site'].isin(selected_sites)]
-    .groupby(['Site', 'Period'], as_index=False)['Amount']
+    df_raw[df_raw['Item Detail'].isin(selected_items)]
+    .groupby(['Item Detail', 'Period'], as_index=False)['Amount']
     .sum()
 )
 
+# วาดกราฟ
 fig = px.line(
     plot_df,
     x='Period',
     y='Amount',
-    color='Site',
-    title="Revenue Trend Comparison",
+    color='Item Detail',
+    title="Revenue Trend by Item Detail",
     markers=True
 )
 fig.update_layout(xaxis_title="Period", yaxis_title="Amount")
