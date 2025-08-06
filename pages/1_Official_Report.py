@@ -14,8 +14,8 @@ st.title("📊 Official Monthly Report")
 if "show_uploader" not in st.session_state:
     st.session_state.show_uploader = False
 
-if st.button("📂 Generate Official Report"):
-    st.session_state.show_uploader = True
+#if st.button("📂 Generate Official Report"):
+#    st.session_state.show_uploader = True
 
 if st.session_state.show_uploader:
     uploaded_files = st.file_uploader("Upload .xlsx files", type="xlsx", accept_multiple_files=True)
