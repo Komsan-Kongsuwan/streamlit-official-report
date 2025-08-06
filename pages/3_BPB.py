@@ -37,7 +37,7 @@ fig_line = px.line(
     title="Monthly Trend",
     markers=True
 )
-fig_line.update_layout(yaxis_title="Amount")
+fig_line.update_layout(xaxis_title = "", yaxis_title="Amount")
 st.plotly_chart(fig_line, use_container_width=True)
 
 # --- Bar Chart: Total Revenue by Item Detail ---
@@ -55,5 +55,5 @@ fig_bar = px.bar(
     title="Total Revenue by Item Detail",
     text_auto='.2s'
 )
-fig_bar.update_layout(yaxis_title="Total Amount")
+fig_bar.update_layout(xaxis_title = "", yaxis_title="Total Amount")
 st.plotly_chart(fig_bar, use_container_width=True)
