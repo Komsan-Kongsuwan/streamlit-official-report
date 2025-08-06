@@ -105,22 +105,3 @@ if uploaded_files:
 
     # 👉 Save to session for use in Chart page
     st.session_state["official_data"] = df_raw
-
-    # 📈 Show chart
-    st.markdown("### 📈 Trend by Site")
-    df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
-    df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
-    df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
-    site_list = sorted(df_raw['Site'].dropna().unique())
-    selected_site = st.selectbox("Select site to display trend", site_list)
-    chart_df = df_raw[df_raw['Site'] == selected_site].groupby(['Period'], as_index=False)['Amount'].sum()
-
-    fig = px.line(
-        chart_df,
-        x='Period',
-        y='Amount',
-        title=f"Monthly Revenue for Site: {selected_site}"
-    )
-    fig.update_traces(mode='lines+markers')
-    fig.update_layout(xaxis_title="Period", yaxis_title="Amount")
-    st.plotly_chart(fig, use_container_width=True)
