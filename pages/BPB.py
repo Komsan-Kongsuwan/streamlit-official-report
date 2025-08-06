@@ -30,7 +30,7 @@ line_df = (
     .sum()
 )
 
-fig_line = px.line(
+fig_line = px.bar(
     line_df,
     x='Period',
     y='Amount',
