@@ -15,7 +15,7 @@ df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
 
 st.markdown("## Trend Comparison")
 sites = sorted(df_raw['Site'].dropna().unique())
-selected_sites = st.multiselect("Select sites to compare", sites, default=sites[:2])
+selected_sites = st.multiselect("Select sites to compare", sites, default=["BPA"])
 
 if not selected_sites:
     st.info("Select at least one site.")
