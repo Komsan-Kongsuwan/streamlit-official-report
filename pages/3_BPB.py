@@ -41,7 +41,7 @@ fig_line = px.line(
 fig_line.update_layout(
     xaxis_title="",
     yaxis_title="Amount",
-    xaxis=dict(range=[plot_df['Period'].min(), plot_df['Period'].max()])
+    xaxis=dict(range=[row_df['Period'].min(), row_df['Period'].max()])
 )
 
 
