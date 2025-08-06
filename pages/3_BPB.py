@@ -34,7 +34,7 @@ fig_line = px.line(
     x='Period',
     y='Amount',
     color='Item Detail',
-    title="Monthly Trend",
+    title="Monthly",
     markers=True
 )
 
@@ -53,7 +53,7 @@ fig_bar = px.bar(
     bar_df,
     x='Year',
     y='Amount',
-    title="Total Revenue by Item Detail",
+    title="Yearly",
     text_auto='.2s'
 )
 fig_bar.update_layout(xaxis_title = "", yaxis_title="Total Amount")
