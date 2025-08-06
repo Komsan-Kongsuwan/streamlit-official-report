@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.title("📈 Chart Visualization")
+st.title("📈 Chart Visualization Revenue")
 
 if "official_data" not in st.session_state:
     st.warning("⚠️ Official data not found. Generate the official report first.")
