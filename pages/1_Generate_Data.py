@@ -100,7 +100,6 @@ if uploaded_files:
         )
 
     df_pivot, df_raw = generate_official_report(uploaded_files)
-    st.success("✅ Official Report Ready")
     format_and_download(df_pivot)
 
     # 👉 Save to session for use in Chart page
