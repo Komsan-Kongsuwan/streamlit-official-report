@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.markdown(
     """
-    <h1 style='margin-bottom: 0.1rem;'>📈 Chart Visualization Revenue</h1>
+    <h1 style='margin-top: 0.1px;'>📈 Chart Visualization Revenue</h1>
     """,
     unsafe_allow_html=True
 )
