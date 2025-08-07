@@ -129,7 +129,7 @@ if uploaded_files:
         site_order = pd.CategoricalDtype(categories=full_order, ordered=True)
         df_final['Site'] = df_final['Site'].astype(site_order)
         df_final = df_final.sort_values(by=['Site', 'Item Detail', 'Year'])
-
+        df_final['Item Detail'] = df_final['Item Detail'].str.replace(r'^\[\d+\]-', '', regex=True)
 
 
 
