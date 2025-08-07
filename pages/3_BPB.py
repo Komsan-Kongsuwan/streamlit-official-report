@@ -17,7 +17,7 @@ df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
 
 # --- Line Chart: Trend Comparison ---
 items = sorted(df_raw['Item Detail'].dropna().unique())
-selected_items = st.multiselect("Select Item Detail", items, default=["Revenue"])
+selected_items = st.multiselect("Select Item Detail", items, default=["[1002]-Revenue"])
 
 if not selected_items:
     st.info("Select at least one item.")
