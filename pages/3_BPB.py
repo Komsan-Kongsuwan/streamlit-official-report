@@ -88,7 +88,7 @@ def get_star_rating(pct):
     if pct < 0:
         return "😡"
     elif pct <= 25:
-        return "⭐⭐"
+        return "😡😡"
     elif pct <= 50:
         return "⭐⭐⭐"
     elif pct <= 100:
