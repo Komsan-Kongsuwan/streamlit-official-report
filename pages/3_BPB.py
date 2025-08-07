@@ -128,7 +128,7 @@ for row in row_chunks:
         col.markdown(f"""
         <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
             <h5 style="margin-bottom:8px; color:#333;">
-                <b>{data['Item']} {data['Rating']}
+                {data['Item']} {data['Rating']}
             </h5>
             <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
             <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
