@@ -83,18 +83,27 @@ df_selected = df_raw[df_raw['Item Detail'].isin(item_order)].copy()
 latest_month = df_selected['Period'].max()
 prior_month = latest_month - pd.DateOffset(months=1)
 
-# ⭐ ฟังก์ชันให้ rating เป็นดาว
-def get_star_rating(pct):
-    if pct < 0:
+# ⭐ ปรับฟังก์ชันให้ rating ตาม logic ที่ถูกต้อง
+def get_star_rating(pct, is_cost=False):
+    pct_effective = -pct if is_cost else pct  # ถ้าเป็น cost การลดลงถือว่าดี
+    if pct_effective < 0:
         return "⭐"
-    elif pct <= 25:
+    elif pct_effective <= 25:
         return "⭐⭐"
-    elif pct <= 50:
+    elif pct_effective <= 50:
         return "⭐⭐⭐"
-    elif pct <= 100:
+    elif pct_effective <= 100:
         return "⭐⭐⭐⭐"
     else:
         return "⭐⭐⭐⭐⭐"
+
+# 🧮 เตรียมรายการที่เป็น Cost (จะใช้ logic ตรงข้าม)
+cost_items = {
+    "[1046]-Cost Total",
+    "[1047]-Variable Cost",
+    "[1049]-Fix Cost",
+    "[1051]-Expense Total"
+}
 
 # 🧮 เตรียมข้อมูลเปรียบเทียบ
 comparison_data = []
@@ -104,19 +113,23 @@ for item in item_order:
     diff = this_month_val - last_month_val
     pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
 
-    rating = get_star_rating(pct)
+    is_cost = item in cost_items
+    rating = get_star_rating(pct, is_cost=is_cost)
+
+    # 🔁 ปรับสี: ถ้าเป็น cost การลดลง = green, เพิ่มขึ้น = red
+    color = "green" if (diff < 0 if is_cost else diff > 0) else "red"
+
     comparison_data.append({
-        "Item": item.split("]-")[-1],  # 🔍 ตัด prefix [xxxx]-
+        "Item": item.split("]-")[-1],
         "Current": f"{this_month_val:,.0f} THB",
         "Previous": f"{last_month_val:,.0f} THB",
         "Diff": f"{diff:+,.0f} THB",
         "Pct": f"{pct:+.2f} %",
         "Month1": latest_month.strftime("%b-%Y"),
         "Month2": prior_month.strftime("%b-%Y"),
-        "Color": "green" if diff >= 0 else "red",
+        "Color": color,
         "Rating": rating
     })
-
 # 🎨 แสดงผลด้วย CSS และแบ่งเป็น 2 แถว (4 คอลัมน์)
 st.markdown("### 📊 Monthly Comparison Summary")
 
