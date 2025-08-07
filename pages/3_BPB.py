@@ -118,7 +118,7 @@ for row in row_chunks:
             <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
                 {data['Pct']} = {data['Diff']}
             </p>
-            <br><br>
         </div>
+        <br>
         """, unsafe_allow_html=True)
 
