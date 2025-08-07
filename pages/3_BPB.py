@@ -10,7 +10,7 @@ if "official_data" not in st.session_state:
     st.stop()
 
 df_raw = st.session_state["official_data"].copy()
-df_raw = df_raw[df_raw['Site'] == "BPB"]
+df_raw = df_raw[df_raw['Site'] == "ST9"]
 df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
 df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
 df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
@@ -132,7 +132,7 @@ for row in row_chunks:
             </h5>
             <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
             <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
-            <p style="margin-top:8px; color:{data['Color']}; font-weight:normal;">
+            <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
                 {data['Pct']} = {data['Diff']}
             </p>
         </div>
