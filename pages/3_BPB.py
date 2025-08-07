@@ -98,7 +98,7 @@ def get_star_rating(pct):
     elif pct <= 100:
         return "😀 [🟩🟩🟩🟩🟩]"
     else:
-        return "🌟 [🟦🟦🟦🟦🟦]"  # optional: >100% super-star
+        return "🌟 [★★★★★]"  # optional: >100% super-star
 
 # 🧮 เตรียมข้อมูลเปรียบเทียบ
 comparison_data = []
