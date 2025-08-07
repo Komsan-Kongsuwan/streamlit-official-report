@@ -10,7 +10,7 @@ if "official_data" not in st.session_state:
     st.stop()
 
 df_raw = st.session_state["official_data"].copy()
-df_raw = df_raw[df_raw['Site'] == "SDCT"]
+df_raw = df_raw[df_raw['Site'] == "STF"]
 df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
 df_raw['Period'] = df_raw['Year'] + "-" + df_raw['Month']
 df_raw['Period'] = pd.to_datetime(df_raw['Period'], format="%Y-%m")
