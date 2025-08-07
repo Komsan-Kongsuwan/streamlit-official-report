@@ -39,6 +39,101 @@ if uploaded_files:
 
         df_final = pd.concat(df_list, ignore_index=True)
         df_final['Amount'] = pd.to_numeric(df_final['Amount'], errors='coerce').fillna(0)
+
+
+
+        corrections = {
+            'Signboard TAX': 'Signboard Tax',
+            'Common Expense': 'Common expense',
+            'System service': 'Cargo Master',  
+            # Add more as needed
+        }
+
+        # Apply corrections to 'Item Detail' column
+        df_final['Item Detail'] = df_final['Item Detail'].replace(corrections)        
+
+        # Prefix definitions
+        special_prefixes = {
+            (np.nan, 'Revenue Total'): '[1045]-Revenue Total',
+            (np.nan, 'Cost Total'): '[1046]-Cost Total',
+            (np.nan, 'Variable Cost'): '[1047]-Variable Cost',
+            (np.nan, 'Marginal Profit'): '[1048]-Marginal Profit',
+            (np.nan, 'Fix Cost'): '[1049]-Fix Cost',
+            (np.nan, 'Gross Profit'): '[1050]-Gross Profit',
+            (np.nan, 'Expense Total'): '[1051]-Expense Total',
+            (np.nan, 'Operating Profit'): '[1052]-Operating Profit'
+        }
+
+        # Filter and create prefix map
+        mask = ~df_final.apply(lambda row: (row['Item'], row['Item Detail']) in special_prefixes, axis=1)
+        unique_items = df_final[mask][['Item', 'Item Detail']].drop_duplicates().reset_index(drop=True)
+        prefix_map = {
+            (row['Item'], row['Item Detail']): f"[{str(i+1001).zfill(4)}]-{row['Item Detail']}"
+            for i, row in unique_items.iterrows()
+        }
+
+        prefix_map.update(special_prefixes)
+        
+        df_final['Item Detail'] = df_final.apply(
+            lambda row: prefix_map.get((row['Item'], row['Item Detail']), row['Item Detail']),
+            axis=1
+        )
+
+        # VC, FC, MP
+        df_vc = df_final[df_final['Type'] == 'v'].groupby(['Site', 'Year', 'Month'], as_index=False)['Amount'].sum()
+        df_vc['Item Detail'] = '[1047]-Variable Cost'
+        df_vc[['Type', 'Item']] = ''
+
+        df_fc = df_final[df_final['Type'] == 'f'].groupby(['Site', 'Year', 'Month'], as_index=False)['Amount'].sum()
+        df_fc['Item Detail'] = '[1049]-Fix Cost'
+        df_fc[['Type', 'Item']] = ''
+        
+        revenue_key = next(((k, v) for k, v in prefix_map.items() if k[1] == 'Revenue'), (None, None))[1]
+        df_rev = df_final[df_final['Item Detail'] == revenue_key].groupby(['Site', 'Year', 'Month'], as_index=False)['Amount'].sum()
+        df_rev.rename(columns={'Amount': 'Revenue'}, inplace=True)
+        df_mp = pd.merge(df_rev, df_vc[['Site', 'Year', 'Month', 'Amount']], on=['Site', 'Year', 'Month'], how='left')
+        df_mp.rename(columns={'Amount': 'Variable Cost'}, inplace=True)
+        df_mp.fillna(0, inplace=True)
+        df_mp['Amount'] = df_mp['Revenue'] - df_mp['Variable Cost']
+        df_mp['Item Detail'] = '[1048]-Marginal Profit'
+        df_mp[['Type', 'Item']] = ''
+
+        df_mp = df_mp[['Month', 'Year', 'Type', 'Item', 'Item Detail', 'Site', 'Amount']]
+        df_vc = df_vc[['Month', 'Year', 'Type', 'Item', 'Item Detail', 'Site', 'Amount']]
+        df_fc = df_fc[['Month', 'Year', 'Type', 'Item', 'Item Detail', 'Site', 'Amount']]
+
+        df_final = pd.concat([df_final, df_vc, df_fc, df_mp], ignore_index=True)
+        sort_order = {v: i for i, v in enumerate(sorted(prefix_map.values()))}
+        df_final['ItemSortOrder'] = df_final['Item Detail'].map(sort_order)
+        df_final = df_final.sort_values(by=['Year', 'Month', 'Site', 'Item Detail'])
+
+        df_all_site = (
+            df_final.groupby(['Item Detail', 'Year', 'Month'], as_index=False)
+            .agg({'Amount': 'sum'})
+        )
+        df_all_site['Site'] = 'SDCT'
+
+        df_final = pd.concat([df_final, df_all_site], ignore_index=True)
+
+        # กำหนดลำดับหลัก
+        custom_order = ['SDCT', 'ACW', 'BPA', 'BPB', 'BPC', 'BPD', 'BN20']
+
+        # ค่าทั้งหมดที่เจอในคอลัมน์ Site
+        all_sites = df_final['Site'].unique().tolist()
+
+        # เพิ่มค่าอื่น ๆ ต่อท้ายลำดับ custom
+        full_order = custom_order + [x for x in all_sites if x not in custom_order]
+
+        # ทำต่อเหมือนเดิม
+        site_order = pd.CategoricalDtype(categories=full_order, ordered=True)
+        df_final['Site'] = df_final['Site'].astype(site_order)
+        df_final = df_final.sort_values(by=['Site', 'Item Detail', 'Year'])
+
+
+
+
+
+        
         df_final['Month'] = df_final['Month'].astype(str).str.zfill(2)
         month_map = {f"{i:02d}": calendar.month_abbr[i] for i in range(1, 13)}
 
