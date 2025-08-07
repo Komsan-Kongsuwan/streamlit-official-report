@@ -58,3 +58,53 @@ fig_bar = px.bar(
 )
 fig_bar.update_layout(xaxis_title = "", yaxis_title="Total Amount (THB)")
 st.plotly_chart(fig_bar, use_container_width=True)
+
+
+
+
+
+
+import datetime
+
+# Step 1: Filter only selected items
+latest_df = df_raw[df_raw['Item Detail'].isin(selected_items)]
+
+# Step 2: Get the latest 2 months from data
+latest_month = latest_df['Period'].max()
+prior_month = latest_month - pd.DateOffset(months=1)
+
+# Step 3: Prepare summary
+comparison_data = []
+
+for item in selected_items:
+    this_month_val = latest_df[(latest_df['Period'] == latest_month) & (latest_df['Item Detail'] == item)]['Amount'].sum()
+    last_month_val = latest_df[(latest_df['Period'] == prior_month) & (latest_df['Item Detail'] == item)]['Amount'].sum()
+    diff = this_month_val - last_month_val
+    pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
+
+    comparison_data.append({
+        "Item": item.replace('[1002]-', '').strip(),  # Clean prefix if needed
+        "Current": f"{this_month_val:,.0f} THB",
+        "Previous": f"{last_month_val:,.0f} THB",
+        "Diff": f"{diff:+,.0f} THB",
+        "Pct": f"{pct:+.2f} %",
+        "Month1": latest_month.strftime("%b-%Y"),
+        "Month2": prior_month.strftime("%b-%Y"),
+    })
+
+# Step 4: Display using st.columns()
+st.markdown("### 🔍 Monthly Comparison")
+
+cols = st.columns(len(comparison_data))
+for col, data in zip(cols, comparison_data):
+    color = "green" if "-" not in data["Diff"] else "red"
+    col.markdown(f"""
+    <div style="border:1px solid #ccc; padding:10px; border-radius:10px; background-color:#f5f9f9;">
+        <h4 style="margin-bottom:5px;">{data['Item']}</h4>
+        <p style="margin:0;"><b>{data['Month2']}</b>: <span style='color:green;'>{data['Previous']}</span></p>
+        <p style="margin:0;"><b>{data['Month1']}</b>: <span style='color:blue;'>{data['Current']}</span></p>
+        <p style="margin-top:5px; color:{color}; font-weight:bold;">
+            {data['Pct']} = {data['Diff']}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
