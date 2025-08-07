@@ -86,9 +86,9 @@ prior_month = latest_month - pd.DateOffset(months=1)
 # ⭐ ฟังก์ชันให้ rating เป็นดาว
 def get_star_rating(pct):
     if pct < 0:
-        return "😡"
+        return "😂"
     elif pct <= 25:
-        return "😡😡"
+        return "😂😂"
     elif pct <= 50:
         return "⭐⭐⭐"
     elif pct <= 100:
