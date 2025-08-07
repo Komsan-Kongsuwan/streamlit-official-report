@@ -86,15 +86,15 @@ prior_month = latest_month - pd.DateOffset(months=1)
 # ⭐ ฟังก์ชันให้ rating เป็นดาว
 def get_star_rating(pct):
     if pct < 0:
-        return "😂"
+        return "⭐"
     elif pct <= 25:
-        return "😂😂"
+        return "⭐⭐"
     elif pct <= 50:
         return "⭐⭐⭐"
     elif pct <= 100:
         return "⭐⭐⭐⭐"
     else:
-        return "👑👑👑👑"
+        return "⭐⭐⭐⭐⭐"
 
 # 🧮 เตรียมข้อมูลเปรียบเทียบ
 comparison_data = []
@@ -127,12 +127,12 @@ for row in row_chunks:
     for col, data in zip(cols, row):
         col.markdown(f"""
         <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
-            <h5 style="margin-bottom:8px; color:#333;">
+            <b><h5 style="margin-bottom:8px; color:#333;"></b>
                 {data['Item']} {data['Rating']}
             </h5>
             <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
             <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
-            <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
+            <p style="margin-top:8px; color:{data['Color']}; font-weight:normal;">
                 {data['Pct']} = {data['Diff']}
             </p>
         </div>
