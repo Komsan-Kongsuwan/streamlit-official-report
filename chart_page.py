@@ -81,11 +81,11 @@ def render_chart_page(site_code):
 
     def get_star_rating(pct, is_cost=False):
         pct_effective = -pct if is_cost else pct
-        if pct_effective < 0: return "⭐"
-        elif pct_effective <= 25: return "⭐⭐"
-        elif pct_effective <= 50: return "⭐⭐⭐"
-        elif pct_effective <= 100: return "⭐⭐⭐⭐"
-        else: return "⭐⭐⭐⭐⭐"
+        if pct_effective < 0: return "⚠️"
+        elif pct_effective <= 25: return "⭐"
+        elif pct_effective <= 50: return "⭐⭐"
+        elif pct_effective <= 100: return "⭐⭐⭐"
+        else: return "⭐⭐⭐⭐"
 
     comparison_data = []
     for item in item_order:
@@ -148,4 +148,5 @@ def render_chart_page(site_code):
                     {data['Arrow']} {data['Pct']} = {data['Diff']}
                 </p>
             </div>
+            <br>
             """, unsafe_allow_html=True)
