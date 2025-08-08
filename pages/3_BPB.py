@@ -49,7 +49,7 @@ fig_line.update_layout(
     xaxis=dict(
         showspikes=True,
         spikecolor="red",
-        spikethickness=1,
+        spikethickness=1.5,
         spikemode="across"  # full height spike
     ),
     hoverlabel=dict(
