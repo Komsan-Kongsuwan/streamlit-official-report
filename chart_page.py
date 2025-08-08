@@ -126,4 +126,5 @@ def render_chart_page(site_code):
                     {data['Pct']} = {data['Diff']}
                 </p>
             </div>
+            <br>
             """, unsafe_allow_html=True)
