@@ -42,7 +42,7 @@ fig_line = px.line(
 
 
 
-fig.update_layout(
+fig_line.update_layout(
     hovermode="x",  # show vertical hover
     hoverdistance=100,  # distance to show point
     spikedistance=-1,  # show spike at any distance
