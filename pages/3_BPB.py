@@ -38,7 +38,19 @@ fig_line = px.line(
     markers=True
 )
 
-fig_line.update_layout(xaxis_title = "", yaxis_title="Amount (THB)")
+#fig_line.update_layout(xaxis_title = "", yaxis_title="Amount (THB)")
+
+
+
+fig.update_layout(
+    hovermode="x",  # show vertical hover
+    hoverdistance=100,  # distance to show point
+    spikedistance=-1,  # show spike at any distance
+    xaxis=dict(showspikes=True, spikecolor="gray", spikethickness=1),
+    yaxis=dict(showspikes=True, spikecolor="gray", spikethickness=1)
+)
+
+
 st.plotly_chart(fig_line, use_container_width=True)
 
 # --- Bar Chart: Total Revenue by Item Detail ---
