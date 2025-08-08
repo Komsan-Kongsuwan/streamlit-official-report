@@ -62,7 +62,7 @@ if uploaded_files:
             (np.nan, 'Fix Cost'): '[1049]-Fix Cost',
             (np.nan, 'Gross Profit'): '[1050]-Gross Profit',
             (np.nan, 'Expense Total'): '[1051]-Expense Total',
-            (np.nan, 'Operating Profit'): '[1052]-Operating Profit'
+            (np.nan, 'Operating Profit'): '[1052]-Operate Profit'
         }
 
         # Filter and create prefix map
