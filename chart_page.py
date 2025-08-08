@@ -81,7 +81,7 @@ def render_chart_page(site_code):
 
     def get_star_rating(pct, is_cost=False):
         pct_effective = -pct if is_cost else pct
-        if pct_effective < 0: return "🚨"
+        if pct_effective < 0: return ""
         elif pct_effective <= 5: return "⭐"
         elif pct_effective <= 15: return "⭐⭐"
         elif pct_effective <= 25: return "⭐⭐⭐"
