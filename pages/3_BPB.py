@@ -48,7 +48,7 @@ fig_line.update_layout(
     spikedistance=-1,
     xaxis=dict(
         showspikes=True,
-        spikecolor="gray",
+        spikecolor="blue",
         spikethickness=1,
         spikemode="across"  # 👈 makes the spike extend full height
     )
