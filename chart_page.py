@@ -94,35 +94,16 @@ def render_chart_page(site_code):
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
 
-        # 🔁 ปรับสีและลูกศร
-        if is_cost:
-            if diff > 0:  # ต้นทุนเพิ่ม
-                arrow = "▲"
-                color = "red"
-            elif diff < 0:  # ต้นทุนลด
-                arrow = "▼"
-                color = "green"
-            else:
-                arrow = ""
-                color = "black"
-        else:
-            if diff > 0:  # กำไรเพิ่ม
-                arrow = "▲"
-                color = "green"
-            elif diff < 0:  # กำไรลด
-                arrow = "▼"
-                color = "red"
-            else:
-                arrow = ""
-                color = "black"
-        
+        is_cost = item in cost_items
+        rating = get_star_rating(pct, is_cost=is_cost)
+        color = "green" if (diff < 0 if is_cost else diff > 0) else "red"
+
         comparison_data.append({
             "Item": item.split("]-")[-1],
             "Current": f"{this_month_val:,.0f} THB",
             "Previous": f"{last_month_val:,.0f} THB",
-            "Diff": f"{abs(diff):,.0f} THB",  # ตัดเครื่องหมายออก
-            "Pct": f"{abs(pct):.2f} %",
-            "Arrow": arrow,
+            "Diff": f"{diff:+,.0f} THB",
+            "Pct": f"{pct:+.2f} %",
             "Month1": latest_month.strftime("%b-%Y"),
             "Month2": prior_month.strftime("%b-%Y"),
             "Color": color,
@@ -142,8 +123,7 @@ def render_chart_page(site_code):
                 <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
                 <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
                 <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
-                    {data['Arrow']} {data['Pct']} = {data['Diff']}
-                </p>   
+                    {data['Pct']} = {data['Diff']}
+                </p>
             </div>
-            <br>
             """, unsafe_allow_html=True)
