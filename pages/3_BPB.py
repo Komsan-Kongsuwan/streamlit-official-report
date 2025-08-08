@@ -43,16 +43,22 @@ fig_line = px.line(
 
 
 fig_line.update_layout(
-    hovermode="x",  # show vertical hover line
+    hovermode="x",
     hoverdistance=100,
     spikedistance=-1,
     xaxis=dict(
         showspikes=True,
-        spikecolor="blue",
+        spikecolor="gray",
         spikethickness=1,
-        spikemode="across"  # 👈 makes the spike extend full height
+        spikemode="across"  # full height spike
+    ),
+    hoverlabel=dict(
+        bgcolor="black",   # background color of hover box
+        font_size=14,      # font size
+        font_color="white" # text color
     )
 )
+
 
 
 
