@@ -43,11 +43,17 @@ fig_line = px.line(
 
 
 fig_line.update_layout(
-    hovermode="x",  # show vertical hover
-    hoverdistance=100,  # distance to show point
-    spikedistance=-1,  # show spike at any distance
-    xaxis=dict(showspikes=True, spikecolor="gray", spikethickness=1)
+    hovermode="x",  # show vertical hover line
+    hoverdistance=100,
+    spikedistance=-1,
+    xaxis=dict(
+        showspikes=True,
+        spikecolor="gray",
+        spikethickness=1,
+        spikemode="across"  # 👈 makes the spike extend full height
+    )
 )
+
 
 
 st.plotly_chart(fig_line, use_container_width=True)
