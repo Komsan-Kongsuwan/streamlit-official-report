@@ -1,2 +1,2 @@
 from chart_page import render_chart_page
-render_chart_page("TBN")
+render_chart_page("TBN2")
