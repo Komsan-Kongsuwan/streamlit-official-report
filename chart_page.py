@@ -96,27 +96,29 @@ def render_chart_page(site_code):
 
         is_cost = item in cost_items
         rating = get_star_rating(pct, is_cost=is_cost)
-        # 🔁 ปรับสีและลูกศร
+        
+        # ปรับ Arrow และสีให้รองรับค่าติดลบ
         if is_cost:
-            if diff > 0:  # ต้นทุนเพิ่ม
+            if this_month_val > last_month_val:
                 arrow = "▲"
                 color = "red"
-            elif diff < 0:  # ต้นทุนลด
+            elif this_month_val < last_month_val:
                 arrow = "▼"
                 color = "green"
             else:
                 arrow = ""
                 color = "black"
-        else:
-            if diff > 0:  # กำไรเพิ่ม
+        else:  # profit items
+            if this_month_val > last_month_val:
                 arrow = "▲"
                 color = "green"
-            elif diff < 0:  # กำไรลด
+            elif this_month_val < last_month_val:
                 arrow = "▼"
                 color = "red"
             else:
                 arrow = ""
                 color = "black"
+
         
         comparison_data.append({
             "Item": item.split("]-")[-1],
