@@ -78,24 +78,27 @@ def render_chart_page(site_code):
     prior_month = latest_month - pd.DateOffset(months=1)
 
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
-    
-    def get_star_rating(is_cost=False, this_month_val=0, last_month_val=0):
-        diff = this_month_val - last_month_val
-        pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
-        if not is_cost:
-            if pct <= -1 : return "🚨🚨🚨🚨"
-            elif pct <= 0: return "⭐"
-            elif pct <= 25: return "⭐⭐"
-            elif pct <= 50: return "⭐⭐⭐"
-            else: return "⭐⭐⭐⭐" 
+
+    def get_star_rating(pct, is_cost=False):
+        pct_effective = -pct if not is_cost else pct
+        if pct_effective < -100: return "🚨🚨🚨🚨"
+        elif pct_effective <= -50: return "🚨🚨🚨"
+        elif pct_effective <= -25: return "🚨🚨"
+        elif pct_effective <= -1: return "🚨"
+        elif pct_effective <= 0: return "⭐"
+        elif pct_effective <= 25: return "⭐⭐"
+        elif pct_effective <= 50: return "⭐⭐⭐"
+        else: return "⭐⭐⭐⭐" 
             
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         last_month_val = df_selected[(df_selected['Period'] == prior_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         diff = this_month_val - last_month_val
+        pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
+
         is_cost = item in cost_items
-        rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
+        rating = get_star_rating(pct, is_cost=is_cost)
         
         # ปรับ Arrow และสีให้รองรับค่าติดลบ
         if is_cost:
@@ -151,4 +154,3 @@ def render_chart_page(site_code):
             </div>
             <br>
             """, unsafe_allow_html=True)
-
