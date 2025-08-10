@@ -106,7 +106,7 @@ def render_chart_page(site_code):
                 elif pct <= 25: return "🚨🚨"
                 elif pct <= 50: return "🚨🚨🚨"
                 elif pct <= 100: return "🚨🚨🚨🚨"
-                else: return "🚨🚨🚨🚨🚨"
+                else: return "🚨🚨🚨🚨"
                 
     comparison_data = []
     for item in item_order:
