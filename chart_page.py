@@ -78,7 +78,7 @@ def render_chart_page(site_code):
     prior_month = latest_month - pd.DateOffset(months=1)
 
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
-
+    
     def get_star_rating(is_cost=False, this_month_val=0, last_month_val=0):
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
@@ -93,7 +93,7 @@ def render_chart_page(site_code):
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         last_month_val = df_selected[(df_selected['Period'] == prior_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
-
+        diff = this_month_val - last_month_val
         is_cost = item in cost_items
         rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
         
