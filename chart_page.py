@@ -83,7 +83,7 @@ def render_chart_page(site_code):
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
         if is_cost:
-            if pct_effective < -100: return "⭐⭐⭐⭐"
+            if pct < -100: return "⭐⭐⭐⭐"
             elif pct <= -50: return "⭐⭐⭐"
             elif pct <= -25: return "⭐⭐"
             elif pct <= 0: return "⭐"
