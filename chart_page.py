@@ -83,26 +83,14 @@ def render_chart_page(site_code):
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
         if is_cost:
-            if pct < 100: return pct
-            elif pct <= 50: return pct
-            elif pct <= 25: return pct
-            elif pct <= 1: return pct
-            elif pct <= 0: return "⭐"
-            elif pct <= -25: return "⭐⭐"
+        if pct_effective < -100: return "⭐⭐⭐⭐"
             elif pct <= -50: return "⭐⭐⭐"
-            else: return "⭐⭐⭐⭐" 
-
-        
-        #pct_effective = -pct if not is_cost else pct
-        #if pct_effective < -100: return "🚨🚨🚨🚨"
-        #elif pct_effective <= -50: return "🚨🚨🚨"
-        #elif pct_effective <= -25: return "🚨🚨"
-        #elif pct_effective <= -1: return "🚨"
-        #elif pct_effective <= 0: return "⭐"
-        #elif pct_effective <= 25: return "⭐⭐"
-        #elif pct_effective <= 50: return "⭐⭐⭐"
-        #else: return "⭐⭐⭐⭐" 
-       
+            elif pct <= -25: return "⭐⭐"
+            elif pct <= 0: return "⭐"
+            elif pct <= 25: return "🚨"
+            elif pct <= 50: return "🚨🚨"
+            elif pct <= 75: return "🚨🚨🚨"
+            else: return "🚨🚨🚨🚨" 
             
     comparison_data = []
     for item in item_order:
