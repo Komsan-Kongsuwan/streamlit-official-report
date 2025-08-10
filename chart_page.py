@@ -91,7 +91,7 @@ def render_chart_page(site_code):
             elif pct_effective <= 25: return "⭐⭐"
             elif pct_effective <= 50: return "⭐⭐⭐"
             else: return "⭐⭐⭐⭐" 
-        else
+        else:
             return "NO"
 
         """
