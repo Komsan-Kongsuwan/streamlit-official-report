@@ -94,17 +94,17 @@ def render_chart_page(site_code):
         else:
             return "NO"
 
-        """
-        pct_effective = -pct if not is_cost else pct
-        if pct_effective < -100: return "🚨🚨🚨🚨"
-        elif pct_effective <= -50: return "🚨🚨🚨"
-        elif pct_effective <= -25: return "🚨🚨"
-        elif pct_effective <= -1: return "🚨"
-        elif pct_effective <= 0: return "⭐"
-        elif pct_effective <= 25: return "⭐⭐"
-        elif pct_effective <= 50: return "⭐⭐⭐"
-        else: return "⭐⭐⭐⭐" 
-        """
+        
+        #pct_effective = -pct if not is_cost else pct
+        #if pct_effective < -100: return "🚨🚨🚨🚨"
+        #elif pct_effective <= -50: return "🚨🚨🚨"
+        #elif pct_effective <= -25: return "🚨🚨"
+        #elif pct_effective <= -1: return "🚨"
+        #elif pct_effective <= 0: return "⭐"
+        #elif pct_effective <= 25: return "⭐⭐"
+        #elif pct_effective <= 50: return "⭐⭐⭐"
+        #else: return "⭐⭐⭐⭐" 
+       
             
     comparison_data = []
     for item in item_order:
