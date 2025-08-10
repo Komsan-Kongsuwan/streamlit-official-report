@@ -9,7 +9,7 @@ def render_chart_page(site_code):
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
         st.stop()
-
+        
     df_raw = st.session_state["official_data"].copy()
     df_raw = df_raw[df_raw['Site'] == site_code]
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
@@ -80,7 +80,7 @@ def render_chart_page(site_code):
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
 
     def get_star_rating(pct, is_cost=False):
-        pct_effective = -pct if is_cost else pct
+        pct_effective = -pct if not is_cost else pct
         if pct_effective < -100: return "🚨🚨🚨🚨"
         elif pct_effective <= -50: return "🚨🚨🚨"
         elif pct_effective <= -25: return "🚨🚨"
@@ -121,7 +121,6 @@ def render_chart_page(site_code):
             else:
                 arrow = ""
                 color = "black"
-
         
         comparison_data.append({
             "Item": item.split("]-")[-1],
@@ -135,7 +134,6 @@ def render_chart_page(site_code):
             "Color": color,
             "Rating": rating
         })
-
 
     st.markdown("### 📊 Monthly Comparison Summary")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
