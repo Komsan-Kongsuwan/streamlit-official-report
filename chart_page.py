@@ -80,15 +80,15 @@ def render_chart_page(site_code):
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
 
     def get_star_rating(pct, is_cost=False):
-    pct_effective = -pct if not is_cost else pct
-    if pct_effective < -100: return "🚨🚨🚨🚨"
-    elif pct_effective <= -50: return "🚨🚨🚨"
-    elif pct_effective <= -25: return "🚨🚨"
-    elif pct_effective <= -1: return "🚨"
-    elif pct_effective <= 0: return "⭐"
-    elif pct_effective <= 25: return "⭐⭐"
-    elif pct_effective <= 50: return "⭐⭐⭐"
-    else: return "⭐⭐⭐⭐" 
+        pct_effective = -pct if not is_cost else pct
+        if pct_effective < -100: return "🚨🚨🚨🚨"
+        elif pct_effective <= -50: return "🚨🚨🚨"
+        elif pct_effective <= -25: return "🚨🚨"
+        elif pct_effective <= -1: return "🚨"
+        elif pct_effective <= 0: return "⭐"
+        elif pct_effective <= 25: return "⭐⭐"
+        elif pct_effective <= 50: return "⭐⭐⭐"
+        else: return "⭐⭐⭐⭐" 
     
     comparison_data = []
     for item in item_order:
