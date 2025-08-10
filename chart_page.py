@@ -89,7 +89,7 @@ def render_chart_page(site_code):
         elif pct_effective <= 25: return "⭐⭐"
         elif pct_effective <= 50: return "⭐⭐⭐"
         else: return "⭐⭐⭐⭐" 
-        if this_month_val < 0: return  "🚨🚨🚨🚨"
+        if this_month_val < 0: return  "🚨🚨⭐🚨"
             
     comparison_data = []
     for item in item_order:
