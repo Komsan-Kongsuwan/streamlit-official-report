@@ -79,7 +79,7 @@ def render_chart_page(site_code):
 
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
 
-    def get_star_rating(pct, is_cost=False, this_month_value):
+    def get_star_rating(pct, is_cost=False, this_month_val):
         pct_effective = -pct if not is_cost else pct
         if pct_effective < -100: return "🚨🚨🚨🚨"
         elif pct_effective <= -50: return "🚨🚨🚨"
@@ -89,7 +89,7 @@ def render_chart_page(site_code):
         elif pct_effective <= 25: return "⭐⭐"
         elif pct_effective <= 50: return "⭐⭐⭐"
         else: return "⭐⭐⭐⭐" 
-        if this_month_value < 0: return  "🚨🚨🚨🚨"
+        if this_month_val < 0: return  "🚨🚨🚨🚨"
             
     comparison_data = []
     for item in item_order:
