@@ -15,6 +15,27 @@ def render_chart_page(site_code):
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
+
+    st.markdown("### 📊 Monthly Comparison Summary")
+    row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
+    for row in row_chunks:
+        cols = st.columns(4)
+        for col, data in zip(cols, row):
+            col.markdown(f"""
+            <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
+                <h5 style="margin-bottom:8px; color:#333;">
+                    {data['Item']} {data['Rating']}
+                </h5>
+                <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
+                <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
+                <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
+                    {data['Arrow']} {data['Pct']} = {data['Diff']}
+                </p>
+            </div>
+            <br>
+            """, unsafe_allow_html=True)    
+    
+    
     # --- Line Chart ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail", items, default=["[1002]-Revenue"])
@@ -153,22 +174,3 @@ def render_chart_page(site_code):
             "Color": color,
             "Rating": rating
         })
-
-    st.markdown("### 📊 Monthly Comparison Summary")
-    row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
-    for row in row_chunks:
-        cols = st.columns(4)
-        for col, data in zip(cols, row):
-            col.markdown(f"""
-            <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
-                <h5 style="margin-bottom:8px; color:#333;">
-                    {data['Item']} {data['Rating']}
-                </h5>
-                <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
-                <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
-                <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
-                    {data['Arrow']} {data['Pct']} = {data['Diff']}
-                </p>
-            </div>
-            <br>
-            """, unsafe_allow_html=True)
