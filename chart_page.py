@@ -102,7 +102,7 @@ def render_chart_page(site_code):
                 if pct < 5: return "🚨"
                 elif pct <= 25: return "🚨🚨"
                 elif pct <= 50: return "🚨🚨🚨"
-                elif pct <= 100 return "🚨🚨🚨🚨"
+                elif pct <= 100: return "🚨🚨🚨🚨"
                 else: return "🚨🚨🚨🚨🚨"
                 
     comparison_data = []
