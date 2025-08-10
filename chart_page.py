@@ -95,7 +95,7 @@ def render_chart_page(site_code):
         last_month_val = df_selected[(df_selected['Period'] == prior_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
 
         is_cost = item in cost_items
-        rating = get_star_rating(pct, is_cost=is_cost, this_month_val=this_month_val, last_month_val)
+        rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val)
         
         # ปรับ Arrow และสีให้รองรับค่าติดลบ
         if is_cost:
