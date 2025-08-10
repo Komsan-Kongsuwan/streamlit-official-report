@@ -79,7 +79,22 @@ def render_chart_page(site_code):
 
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
 
-    def get_star_rating(pct, is_cost=False):
+    def get_star_rating(pct, is_cost=False, this_month_value, last_month_value):
+        diff = this_month_val - last_month_val
+        pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
+        if is_cost:
+            if pct_effective < -100: return "🚨🚨🚨🚨"
+            elif pct_effective <= -50: return "🚨🚨🚨"
+            elif pct_effective <= -25: return "🚨🚨"
+            elif pct_effective <= -1: return "🚨"
+            elif pct_effective <= 0: return "⭐"
+            elif pct_effective <= 25: return "⭐⭐"
+            elif pct_effective <= 50: return "⭐⭐⭐"
+            else: return "⭐⭐⭐⭐" 
+        else
+            return "NO"
+
+        """
         pct_effective = -pct if not is_cost else pct
         if pct_effective < -100: return "🚨🚨🚨🚨"
         elif pct_effective <= -50: return "🚨🚨🚨"
@@ -89,6 +104,7 @@ def render_chart_page(site_code):
         elif pct_effective <= 25: return "⭐⭐"
         elif pct_effective <= 50: return "⭐⭐⭐"
         else: return "⭐⭐⭐⭐" 
+        """
             
     comparison_data = []
     for item in item_order:
@@ -98,7 +114,7 @@ def render_chart_page(site_code):
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
 
         is_cost = item in cost_items
-        rating = get_star_rating(pct, is_cost=is_cost)
+        rating = get_star_rating(pct, is_cost=is_cost, this_month_value, last_month_value)
         
         # ปรับ Arrow และสีให้รองรับค่าติดลบ
         if is_cost:
