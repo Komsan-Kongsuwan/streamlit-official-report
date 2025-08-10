@@ -91,7 +91,20 @@ def render_chart_page(site_code):
             elif pct <= 20: return "🚨🚨"
             elif pct <= 30: return "🚨🚨🚨"
             else: return "🚨🚨🚨🚨" 
-            
+        else:
+            if this_month_val > 0:
+                if pct > 50: return "⭐⭐⭐⭐"
+                elif pct >= 25: return "⭐⭐⭐"
+                elif pct >= 5: return "⭐⭐"
+                elif pct >= 0: return "⭐"
+                else: return "⭐⭐⭐⭐⭐"
+            else:
+                if pct < 5: return "🚨"
+                elif pct <= 25: return "🚨🚨"
+                elif pct <= 50: return "🚨🚨🚨"
+                elif pct <= 100 return "🚨🚨🚨🚨"
+                else: return "🚨🚨🚨🚨🚨"
+                
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
