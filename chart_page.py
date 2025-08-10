@@ -79,15 +79,6 @@ def render_chart_page(site_code):
 
     cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
 
-
-    
-
-
-
-            
-
-            
-
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
@@ -133,7 +124,6 @@ def render_chart_page(site_code):
             "Color": color,
             "Rating": rating
         })
-
 
     st.markdown("### 📊 Monthly Comparison Summary")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
