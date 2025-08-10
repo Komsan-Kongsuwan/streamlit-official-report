@@ -81,41 +81,6 @@ def render_chart_page(site_code):
 
 
     
-    def get_star_rating(pct, is_cost=False, this_month_val=None, revenue_val=None):
-        """
-        pct: % change vs previous month
-        is_cost: True if this is a cost item
-        this_month_val: current month's amount for this item
-        revenue_val: current month's revenue (needed for profit alert logic)
-        """
-        # 🚨 Case 1: Profit item with negative value → check ratio to revenue
-        if not is_cost and this_month_val is not None and revenue_val is not None:
-            if this_month_val < 0:  # profit is negative
-                abs_ratio = abs(this_month_val) / revenue_val * 100 if revenue_val != 0 else 0
-                if abs_ratio > 50: return "🚨🚨🚨🚨"
-                elif abs_ratio > 25: return "🚨🚨🚨"
-                elif abs_ratio > 5: return "🚨🚨"
-                elif abs_ratio > 1: return "🚨"
-                # if <= 1% of revenue, fall through to normal rating below
-    
-        # ⭐ Case 2: Default rating logic (existing)
-        pct_effective = -pct if not is_cost else pct
-        if pct_effective < -100:
-            return "🚨🚨🚨🚨"
-        elif pct_effective <= -50:
-            return "🚨🚨🚨"
-        elif pct_effective <= -25:
-            return "🚨🚨"
-        elif pct_effective <= -1:
-            return "🚨"
-        elif pct_effective <= 0:
-            return "⭐"
-        elif pct_effective <= 25:
-            return "⭐⭐"
-        elif pct_effective <= 50:
-            return "⭐⭐⭐"
-        else:
-            return "⭐⭐⭐⭐"
 
 
 
@@ -188,3 +153,39 @@ def render_chart_page(site_code):
             </div>
             <br>
             """, unsafe_allow_html=True)
+
+    def get_star_rating(pct, is_cost=False, this_month_val=None, revenue_val=None):
+        """
+        pct: % change vs previous month
+        is_cost: True if this is a cost item
+        this_month_val: current month's amount for this item
+        revenue_val: current month's revenue (needed for profit alert logic)
+        """
+        # 🚨 Case 1: Profit item with negative value → check ratio to revenue
+        if not is_cost and this_month_val is not None and revenue_val is not None:
+            if this_month_val < 0:  # profit is negative
+                abs_ratio = abs(this_month_val) / revenue_val * 100 if revenue_val != 0 else 0
+                if abs_ratio > 50: return "🚨🚨🚨🚨"
+                elif abs_ratio > 25: return "🚨🚨🚨"
+                elif abs_ratio > 5: return "🚨🚨"
+                elif abs_ratio > 1: return "🚨"
+                # if <= 1% of revenue, fall through to normal rating below
+    
+        # ⭐ Case 2: Default rating logic (existing)
+        pct_effective = -pct if not is_cost else pct
+        if pct_effective < -100:
+            return "🚨🚨🚨🚨"
+        elif pct_effective <= -50:
+            return "🚨🚨🚨"
+        elif pct_effective <= -25:
+            return "🚨🚨"
+        elif pct_effective <= -1:
+            return "🚨"
+        elif pct_effective <= 0:
+            return "⭐"
+        elif pct_effective <= 25:
+            return "⭐⭐"
+        elif pct_effective <= 50:
+            return "⭐⭐⭐"
+        else:
+            return "⭐⭐⭐⭐"
