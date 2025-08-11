@@ -133,7 +133,7 @@ def render_chart_page(site_code):
     # Remove [####]- prefix for display only
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
     
-    st.markdown(f"### 📈 {', '.join(selected_items_display)}")
+    st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
     
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
@@ -165,7 +165,7 @@ def render_chart_page(site_code):
     st.plotly_chart(fig_line, use_container_width=True)
 
     # --- Bar Chart ---
-    st.markdown(f"### 📊 {', '.join(selected_items_display)}")
+    st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Year'], as_index=False)['Amount'].sum() \
         .sort_values(by='Amount', ascending=False)
