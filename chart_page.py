@@ -103,8 +103,8 @@ def render_chart_page(site_code):
             "Rating": rating
         })
 
-    current_month = df_selected['Period'].max().strftime("%b")
-    before_month = current_month - pd.DateOffset(months=1).strftime("%b")
+    current_month = latest_month.strftime("%b")
+    before_month = prior_month.strftime("%b")
     st.markdown(f"### 📊 Comparison {before_month} vs {current_month}")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
