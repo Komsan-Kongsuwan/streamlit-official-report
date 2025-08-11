@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page(site_code):
-    st.title(f"📈 Chart Visualization - {site_code}")
+    st.title(f"📈 Official Report Analysis - {site_code}")
 
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
@@ -104,7 +104,7 @@ def render_chart_page(site_code):
         })
 
     
-    st.markdown("### 📊 Monthly Comparison Summary")
+    st.markdown("### 📊 Comparison {latest_month} vs {prior_month}")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
