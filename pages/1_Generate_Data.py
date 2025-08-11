@@ -56,10 +56,10 @@ if uploaded_files:
         # Prefix definitions
         special_prefixes = {
             (np.nan, 'Revenue Total'): '[1045]-Revenue Total',
-            (np.nan, 'Cost Total'): '[1046]-Cost Total',
-            (np.nan, 'Variable Cost'): '[1047]-Variable Cost',
-            (np.nan, 'Marginal Profit'): '[1048]-Marginal Profit',
-            (np.nan, 'Fix Cost'): '[1049]-Fix Cost',
+            (np.nan, 'Variable Cost'): '[1046]-Variable Cost',
+            (np.nan, 'Marginal Profit'): '[1047]-Marginal Profit',
+            (np.nan, 'Fix Cost'): '[1048]-Fix Cost',
+            (np.nan, 'Cost Total'): '[1049]-Cost Total',
             (np.nan, 'Gross Profit'): '[1050]-Gross Profit',
             (np.nan, 'Expense Total'): '[1051]-Expense Total',
             (np.nan, 'Operating Profit'): '[1052]-Operate Profit'
