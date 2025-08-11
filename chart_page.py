@@ -17,16 +17,16 @@ def render_chart_page(site_code):
 
     # --- Monthly Comparison Summary ---
     item_order = [
-        "[1045]-Revenue Total", "[1047]-Variable Cost",
-        "[1048]-Marginal Profit", "[1049]-Fix Cost",
-        "[1046]-Cost Total", "[1050]-Gross Profit",
+        "[1045]-Revenue Total", "[1046]-Variable Cost",
+        "[1047]-Marginal Profit", "[1048]-Fix Cost",
+        "[1049]-Cost Total", "[1050]-Gross Profit",
         "[1051]-Expense Total", "[1052]-Operate Profit"
     ]
     df_selected = df_raw[df_raw['Item Detail'].isin(item_order)].copy()
     latest_month = df_selected['Period'].max()
     prior_month = latest_month - pd.DateOffset(months=1)
 
-    cost_items = {"[1046]-Cost Total", "[1047]-Variable Cost", "[1049]-Fix Cost", "[1051]-Expense Total"}
+    cost_items = {"[1049]-Cost Total", "[1046]-Variable Cost", "[1048]-Fix Cost", "[1051]-Expense Total"}
 
     def get_star_rating(is_cost=False, this_month_val=0, last_month_val=0):
         diff = this_month_val - last_month_val
@@ -126,7 +126,7 @@ def render_chart_page(site_code):
     
     # --- Line Chart ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
-    selected_items = st.multiselect("Select Item Detail", items, default=["[1002]-Revenue"])
+    selected_items = st.multiselect("Select Item Detail", items, default=["[1045]-Revenue Total"])
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
