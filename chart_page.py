@@ -51,10 +51,10 @@ def render_chart_page(site_code):
                 elif pct >= -50: return "🚨🚨🚨"
                 else: return "🚨🚨🚨🚨"
             else:
-                if pct < -5: return "🚨"
-                elif pct <= -25: return "🚨🚨"
-                elif pct <= -50: return "🚨🚨🚨"
-                elif pct <= -100: return "🚨🚨🚨🚨"
+                if this_month_value < -5000: return "🚨"
+                elif this_month_value <= -50000: return "🚨🚨"
+                elif this_month_value <= -100000: return "🚨🚨🚨"
+                elif this_month_value <= -500000: return "🚨🚨🚨🚨"
                 else: return "🚨🚨🚨🚨"
                 
     comparison_data = []
