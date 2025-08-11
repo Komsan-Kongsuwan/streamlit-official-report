@@ -17,9 +17,9 @@ def render_chart_page(site_code):
 
     # --- Monthly Comparison Summary ---
     item_order = [
-        "[1045]-Revenue Total", "[1046]-Cost Total",
-        "[1047]-Variable Cost", "[1048]-Marginal Profit",
-        "[1049]-Fix Cost", "[1050]-Gross Profit",
+        "[1045]-Revenue Total", "[1047]-Variable Cost",
+        "[1048]-Marginal Profit", "[1049]-Fix Cost",
+        "[1046]-Cost Total", "[1050]-Gross Profit",
         "[1051]-Expense Total", "[1052]-Operate Profit"
     ]
     df_selected = df_raw[df_raw['Item Detail'].isin(item_order)].copy()
