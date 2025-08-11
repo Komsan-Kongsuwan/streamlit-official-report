@@ -44,7 +44,7 @@ if uploaded_files:
 
 
         corrections = {
-            'Signboard TAX': 'Signboard Tax'
+            'Signboard TAX': 'Signboard Tax',
             'Common Expense': 'Common expense',
             'System service': 'Cargo Master',  
             # Add more as needed
