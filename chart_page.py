@@ -103,7 +103,7 @@ def render_chart_page(site_code):
             "Rating": rating
         })
 
-    st.markdown(f"### 📊 Comparison {prior_month} vs {latest_month}")
+    st.markdown(f"### 📊 Comparison {prior_month.strftime("%b")} vs {latest_month.strftime("%b")}")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
