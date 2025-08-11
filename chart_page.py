@@ -130,7 +130,10 @@ def render_chart_page(site_code):
         st.info("Select at least one item.")
         st.stop()
         
-    st.markdown(f"### 🆗🆖 {selected_items}")
+    # Remove [####]- prefix for display only
+    selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
+    
+    st.markdown(f"### 🆗🆖 {', '.join(selected_items_display)}")
     
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
