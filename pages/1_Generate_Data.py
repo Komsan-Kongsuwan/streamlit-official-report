@@ -44,7 +44,7 @@ if uploaded_files:
 
 
         corrections = {
-            'Signboard TAX': 'Signboard Tax',
+            'Signboard TAX': 'Signboard Tax'
             'Common Expense': 'Common expense',
             'System service': 'Cargo Master',  
             # Add more as needed
@@ -82,11 +82,11 @@ if uploaded_files:
 
         # VC, FC, MP
         df_vc = df_final[df_final['Type'] == 'v'].groupby(['Site', 'Year', 'Month'], as_index=False)['Amount'].sum()
-        df_vc['Item Detail'] = '[1047]-Variable Cost'
+        df_vc['Item Detail'] = '[1046]-Variable Cost'
         df_vc[['Type', 'Item']] = ''
 
         df_fc = df_final[df_final['Type'] == 'f'].groupby(['Site', 'Year', 'Month'], as_index=False)['Amount'].sum()
-        df_fc['Item Detail'] = '[1049]-Fix Cost'
+        df_fc['Item Detail'] = '[1048]-Fix Cost'
         df_fc[['Type', 'Item']] = ''
         
         revenue_key = next(((k, v) for k, v in prefix_map.items() if k[1] == 'Revenue'), (None, None))[1]
@@ -96,7 +96,7 @@ if uploaded_files:
         df_mp.rename(columns={'Amount': 'Variable Cost'}, inplace=True)
         df_mp.fillna(0, inplace=True)
         df_mp['Amount'] = df_mp['Revenue'] - df_mp['Variable Cost']
-        df_mp['Item Detail'] = '[1048]-Marginal Profit'
+        df_mp['Item Detail'] = '[1047]-Marginal Profit'
         df_mp[['Type', 'Item']] = ''
 
         df_mp = df_mp[['Month', 'Year', 'Type', 'Item', 'Item Detail', 'Site', 'Amount']]
