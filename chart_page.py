@@ -126,6 +126,7 @@ def render_chart_page(site_code):
     # --- Line Chart ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail Chart", items, default=["[1045]-Revenue Total"])
+    st.markdown(f"### 📊 {selected_items} ")
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
