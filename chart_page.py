@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page(site_code):
-    st.title(f"🔬 Official Report Analysis - {site_code}")
+    st.title(f"🕵️‍♂️ Official Report Analysis - {site_code}")
 
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
