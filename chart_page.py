@@ -4,19 +4,6 @@ import plotly.express as px
 
 def render_chart_page(site_code):
     st.title(f"🕵️‍♂️ Official Report Analysis - {site_code}")
-
-    # Put this at the top of render_chart_page() after st.title(...)
-    st.markdown(
-        """
-        <style>
-        body {
-            zoom: 90%;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
     
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
