@@ -174,7 +174,7 @@ def render_chart_page(site_code):
         bar_df,
         x='Year',
         y='Amount',
-        color='Customer',
+        color='Item Detail',
         title="Yearly",
         text_auto='.2s'
     )
