@@ -167,7 +167,7 @@ def render_chart_page(site_code):
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() #
+        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() \
         .sort_values(by='Amount', ascending=False)
 
     fig_bar = px.bar(
