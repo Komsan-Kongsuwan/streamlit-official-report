@@ -1,4 +1,3 @@
-# chart_page.py
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -39,7 +38,7 @@ def render_chart_page(site_code):
             elif pct <= 10: return "🚨"
             elif pct <= 20: return "🚨🚨"
             elif pct <= 30: return "🚨🚨🚨"
-            else: return "🚨🚨🚨🚨" 
+            else: return "🚨🚨🚨🚨"
         else:
             if this_month_val > 0:
                 if pct > 50: return "⭐⭐⭐⭐"
@@ -56,7 +55,7 @@ def render_chart_page(site_code):
                 elif this_month_val >= -100000: return "🚨🚨🚨"
                 elif this_month_val >= -500000: return "🚨🚨🚨🚨"
                 else: return "🚨🚨🚨🚨"
-                
+
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
@@ -66,35 +65,27 @@ def render_chart_page(site_code):
 
         is_cost = item in cost_items
         rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
-        
-        # ปรับ Arrow และสีให้รองรับค่าติดลบ
+
         if is_cost:
             if this_month_val > last_month_val:
-                arrow = "▲"
-                color = "red"
+                arrow, color = "▲", "red"
             elif this_month_val < last_month_val:
-                arrow = "▼"
-                color = "green"
+                arrow, color = "▼", "green"
             else:
-                arrow = ""
-                color = "black"
-        else:  # profit items
+                arrow, color = "", "black"
+        else:
             if this_month_val > last_month_val:
-                arrow = "▲"
-                color = "green"
+                arrow, color = "▲", "green"
             elif this_month_val < last_month_val:
-                arrow = "▼"
-                color = "red"
+                arrow, color = "▼", "red"
             else:
-                arrow = ""
-                color = "black"
+                arrow, color = "", "black"
 
-        
         comparison_data.append({
-            "Item": item.split("]-")[-1],
+            "Item": str(item).split("]-", 1)[-1],
             "Current": f"{this_month_val:,.0f} THB",
             "Previous": f"{last_month_val:,.0f} THB",
-            "Diff": f"{abs(diff):,.0f} THB",  # ตัดเครื่องหมายออก
+            "Diff": f"{abs(diff):,.0f} THB",
             "Pct": f"{abs(pct):.2f} %",
             "Arrow": arrow,
             "Month1": latest_month.strftime("%b-%Y"),
@@ -120,21 +111,19 @@ def render_chart_page(site_code):
                 </p>
             </div>
             <br>
-            """, unsafe_allow_html=True)    
-    
-    
-    # --- Line Chart ---
+            """, unsafe_allow_html=True)
+
+    # --- Chart Selection ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail Chart", items, default=["[1045]-Revenue Total"])
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
-        
-    # Remove [####]- prefix for display only
-    selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
-    
+
+    selected_items_display = [str(item).split(']-', 1)[-1] for item in selected_items]
+
+    # --- Line Chart ---
     st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
-    
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
 
@@ -150,26 +139,15 @@ def render_chart_page(site_code):
         hovermode="x",
         hoverdistance=100,
         spikedistance=-1,
-        xaxis=dict(
-            showspikes=True,
-            spikecolor="red",
-            spikethickness=2,
-            spikemode="across"
-        ),
-        hoverlabel=dict(
-            bgcolor="black",
-            font_size=14,
-            font_color="white"
-        )
+        xaxis=dict(showspikes=True, spikecolor="red", spikethickness=2, spikemode="across"),
+        hoverlabel=dict(bgcolor="black", font_size=14, font_color="white")
     )
     st.plotly_chart(fig_line, use_container_width=True)
 
-    """
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() \
-        .sort_values(by='Amount', ascending=False)
+        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
 
     fig_bar = px.bar(
         bar_df,
@@ -181,44 +159,6 @@ def render_chart_page(site_code):
     )
     fig_bar.update_layout(
         xaxis_title="Year",
-        yaxis_title="Total Amount (THB)")
+        yaxis_title="Total Amount (THB)"
+    )
     st.plotly_chart(fig_bar, use_container_width=True)
-    """
-
-
-
-
-# --- Bar Chart ---
-st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
-
-bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)].copy()
-
-# Convert to string and remove prefix safely
-bar_df['Item Detail Display'] = (
-    bar_df['Item Detail']
-    .astype(str)
-    .str.split(']-', 1)
-    .str[-1]
-    .str.strip()
-)
-
-bar_df = (
-    bar_df
-    .groupby(['Item Detail Display', 'Year'], as_index=False)['Amount']
-    .sum()
-    .sort_values(by='Amount', ascending=False)
-)
-
-fig_bar = px.bar(
-    bar_df,
-    x='Year',
-    y='Amount',
-    color='Item Detail Display',  # use cleaned name for colors
-    title="Yearly",
-    text_auto='.2s'
-)
-fig_bar.update_layout(
-    xaxis_title="Year",
-    yaxis_title="Total Amount (THB)"
-)
-st.plotly_chart(fig_bar, use_container_width=True)
