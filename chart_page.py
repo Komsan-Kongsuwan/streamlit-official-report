@@ -164,6 +164,7 @@ def render_chart_page(site_code):
     )
     st.plotly_chart(fig_line, use_container_width=True)
 
+    """
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
@@ -178,5 +179,40 @@ def render_chart_page(site_code):
         title="Yearly",
         text_auto='.2s'
     )
-    fig_bar.update_layout(xaxis_title="", yaxis_title="Total Amount (THB)")
+    fig_bar.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Total Amount (THB)")
+    st.plotly_chart(fig_bar, use_container_width=True)
+    """
+
+
+
+
+    # --- Bar Chart ---
+    st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
+    
+    bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)].copy()
+    
+    # Remove [####]- prefix for display in legend & tooltip
+    bar_df['Item Detail Display'] = bar_df['Item Detail'].str.split(']-', 1).str[-1]
+    
+    bar_df = (
+        bar_df
+        .groupby(['Item Detail Display', 'Year'], as_index=False)['Amount']
+        .sum()
+        .sort_values(by='Amount', ascending=False)
+    )
+    
+    fig_bar = px.bar(
+        bar_df,
+        x='Year',
+        y='Amount',
+        color='Item Detail Display',  # use clean display name for color
+        title="Yearly",
+        text_auto='.2s'
+    )
+    fig_bar.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Total Amount (THB)"
+    )
     st.plotly_chart(fig_bar, use_container_width=True)
