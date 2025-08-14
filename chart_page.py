@@ -14,64 +14,38 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Scrollable slicer for site selection ---
-    sites = sorted(df_raw['Site'].dropna().unique())
+    # --- Multi-select slicer for Site ---
+    sites = sorted(df_raw['Site'].unique())
 
-    if "selected_sites" not in st.session_state:
-        st.session_state.selected_sites = sites[:2]  # default first 2
-
-    st.markdown("""
+    st.markdown(
+        """
         <style>
         .scroll-container {
-            max-height: 250px;
+            height: 250px;
             overflow-y: auto;
-            padding: 5px;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            background-color: #fafafa;
-        }
-        .site-button {
-            display: block;
-            width: 100%;
-            margin-bottom: 5px;
-            padding: 8px;
-            border-radius: 5px;
-            text-align: left;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-        .site-button.selected {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .site-button.unselected {
-            background-color: #f0f0f0;
-            color: black;
+            background-color: #f9f9f9;
         }
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
-    st.subheader("📍 Select Sites")
+    selected_sites = []
     st.markdown('<div class="scroll-container">', unsafe_allow_html=True)
-
     for site in sites:
-        selected = site in st.session_state.selected_sites
-        btn_label = f"✅ {site}" if selected else site
-        if st.button(btn_label, key=f"btn_{site}"):
-            if selected:
-                st.session_state.selected_sites.remove(site)
-            else:
-                st.session_state.selected_sites.append(site)
-
+        if st.checkbox(site, value=(site == sites[0]), key=f"chk_{site}"):
+            selected_sites.append(site)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- Filter df_raw by selected sites ---
-    if not st.session_state.selected_sites:
-        st.info("Select at least one site.")
+    if not selected_sites:
+        st.warning("⚠️ Please select at least one site.")
         st.stop()
 
-    df_raw = df_raw[df_raw['Site'].isin(st.session_state.selected_sites)]
+    # Filter dataframe by selected sites
+    df_raw = df_raw[df_raw['Site'].isin(selected_sites)]
 
     # --- Monthly Comparison Summary ---
     item_order = [
@@ -114,7 +88,7 @@ def render_chart_page():
                 elif this_month_val >= -100000: return "🚨🚨🚨"
                 elif this_month_val >= -500000: return "🚨🚨🚨🚨"
                 else: return "🚨🚨🚨🚨"
-                
+
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
@@ -127,18 +101,24 @@ def render_chart_page():
 
         if is_cost:
             if this_month_val > last_month_val:
-                arrow = "▲"; color = "red"
+                arrow = "▲"
+                color = "red"
             elif this_month_val < last_month_val:
-                arrow = "▼"; color = "green"
+                arrow = "▼"
+                color = "green"
             else:
-                arrow = ""; color = "black"
+                arrow = ""
+                color = "black"
         else:
             if this_month_val > last_month_val:
-                arrow = "▲"; color = "green"
+                arrow = "▲"
+                color = "green"
             elif this_month_val < last_month_val:
-                arrow = "▼"; color = "red"
+                arrow = "▼"
+                color = "red"
             else:
-                arrow = ""; color = "black"
+                arrow = ""
+                color = "black"
 
         comparison_data.append({
             "Item": item.split("]-")[-1],
@@ -180,18 +160,46 @@ def render_chart_page():
         st.stop()
 
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
+
     st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
-    
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
 
-    fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', title="Monthly", markers=True)
+    fig_line = px.line(
+        line_df,
+        x='Period',
+        y='Amount',
+        color='Item Detail',
+        title="Monthly",
+        markers=True
+    )
+    fig_line.update_layout(
+        hovermode="x",
+        hoverdistance=100,
+        spikedistance=-1,
+        xaxis=dict(showspikes=True, spikecolor="red", spikethickness=2, spikemode="across"),
+        hoverlabel=dict(bgcolor="black", font_size=14, font_color="white")
+    )
     st.plotly_chart(fig_line, use_container_width=True)
 
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
+        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() \
+        .sort_values(by='Amount', ascending=False)
 
-    fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', title="Yearly", text_auto='.2s')
+    bar_df['Item Detail Display'] = bar_df['Item Detail'].str.split(']-', 1).str[-1]
+
+    fig_bar = px.bar(
+        bar_df,
+        x='Year',
+        y='Amount',
+        color='Item Detail Display',
+        title="Yearly",
+        text_auto='.2s'
+    )
+    fig_bar.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Total Amount (THB)"
+    )
     st.plotly_chart(fig_bar, use_container_width=True)
