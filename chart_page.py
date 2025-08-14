@@ -14,31 +14,22 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar Site Selector as Buttons ---
-    st.sidebar.header("📍 Select Sites")
+    # --- Sidebar: Single selection buttons ---
+    st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
-    # Initialize selection in session_state
-    if "selected_sites" not in st.session_state:
-        st.session_state.selected_sites = set()
+    if "selected_site" not in st.session_state:
+        st.session_state.selected_site = sites[0]  # default to first site
 
-    # Display buttons for each site
     for site in sites:
-        if site in st.session_state.selected_sites:
-            if st.sidebar.button(f"✅ {site}"):
-                st.session_state.selected_sites.remove(site)
-        else:
-            if st.sidebar.button(f"⬜ {site}"):
-                st.session_state.selected_sites.add(site)
+        if st.sidebar.button(site, use_container_width=True):
+            st.session_state.selected_site = site
 
-    selected_sites = list(st.session_state.selected_sites)
-
-    if not selected_sites:
-        st.info("Select at least one site from the sidebar buttons.")
-        st.stop()
+    site_code = st.session_state.selected_site
+    st.subheader(f"📊 Analysis for site: **{site_code}**")
 
     # --- Filter data ---
-    df_raw = df_raw[df_raw['Site'].isin(selected_sites)]
+    df_raw = df_raw[df_raw['Site'] == site_code]
 
     # --- Monthly Comparison Summary ---
     item_order = [
