@@ -28,7 +28,7 @@ def render_chart_page():
         if btn_clicked:
             st.session_state.selected_site = site
 
-        # Style the button to mimic Streamlit page button
+        # Style the button to mimic Streamlit page button with closer spacing
         st.sidebar.markdown(
             f"""
             <style>
@@ -39,7 +39,7 @@ def render_chart_page():
                 font-weight: {"bold" if is_selected else "normal"};
                 box-shadow: {"inset 0 0 0 2px #0d6efd" if is_selected else "0 2px 4px rgba(0,0,0,0.1)"};
                 padding: 8px 12px;
-                margin-bottom: 1px;
+                margin: 2px 0;   /* reduced margin for closer buttons */
             }}
             div.stButton > button:first-child:hover {{
                 background-color: #e0f0ff;
