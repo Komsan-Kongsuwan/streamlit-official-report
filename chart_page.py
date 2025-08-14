@@ -14,132 +14,20 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Automated Sidebar Navigation: Dynamic site buttons ---
-    st.sidebar.header("📍 Select Site")
-    
-    # Automatically extract unique sites from data
-    available_sites = sorted(df_raw['Site'].dropna().unique())
-    
-    # Handle dynamic site changes (new sites added/removed)
-    if "available_sites_cache" not in st.session_state:
-        st.session_state.available_sites_cache = available_sites
-    elif st.session_state.available_sites_cache != available_sites:
-        st.session_state.available_sites_cache = available_sites
-        st.info(f"🔄 Site list updated! Found {len(available_sites)} sites: {', '.join(available_sites)}")
-    
-    # Auto-initialize selected site
-    if "selected_site" not in st.session_state or st.session_state.selected_site not in available_sites:
-        st.session_state.selected_site = available_sites[0] if available_sites else None
-        if available_sites:
-            st.success(f"🎯 Auto-selected first available site: {st.session_state.selected_site}")
-    
-    if not available_sites:
-        st.sidebar.warning("⚠️ No sites found in data")
-        st.stop()
-    
-    # Display site count info
-    st.sidebar.caption(f"📊 Found {len(available_sites)} sites in data")
-    
-    # Custom CSS for exact Streamlit page navigation styling
-    st.sidebar.markdown("""
-    <style>
-    /* Minimize gaps between buttons */
-    .stButton {
-        margin: 0 !important;
-        margin-bottom: 0.125rem !important;
-        padding: 0 !important;
-    }
-    
-    /* Remove default spacing from button containers */
-    .stButton + .stButton {
-        margin-top: 0 !important;
-    }
-    
-    /* Style buttons to match Streamlit page navigation exactly */
-    .stButton > button {
-        width: 100% !important;
-        padding: 0.5rem 0.75rem !important;
-        margin: 0 !important;
-        border: none !important;
-        border-radius: 0.5rem !important;
-        background-color: transparent !important;
-        color: rgb(49, 51, 63) !important;
-        text-align: left !important;
-        font-size: 0.875rem !important;
-        font-weight: 400 !important;
-        line-height: 1.25rem !important;
-        transition: all 0.2s ease !important;
-        box-shadow: none !important;
-        border-left: 4px solid transparent !important;
-    }
-    
-    .stButton > button:hover {
-        background-color: rgba(151, 166, 195, 0.15) !important;
-        color: rgb(49, 51, 63) !important;
-        border-color: transparent !important;
-    }
-    
-    .stButton > button:focus {
-        box-shadow: none !important;
-        outline: none !important;
-    }
-    
-    .stButton > button:active {
-        background-color: rgba(151, 166, 195, 0.25) !important;
-    }
-    
-    /* Selected state styling */
-    .selected-site {
-        margin: 0 !important;
-        margin-bottom: 0.125rem !important;
-        padding: 0 !important;
-    }
-    
-    .selected-site button {
-        background-color: rgba(255, 75, 75, 0.1) !important;
-        color: rgb(255, 75, 75) !important;
-        font-weight: 600 !important;
-        border-left: 4px solid rgb(255, 75, 75) !important;
-        margin: 0 !important;
-    }
-    
-    .selected-site button:hover {
-        background-color: rgba(255, 75, 75, 0.15) !important;
-        color: rgb(255, 75, 75) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    # --- Site Selection Buttons ---
+    sites = sorted(df_raw['Site'].unique())
+    if "selected_site" not in st.session_state:
+        st.session_state.selected_site = sites[0]  # Default to first site
 
-    # Automatically generate navigation buttons for each site
-    for site_name in available_sites:
-        is_selected = site_name == st.session_state.selected_site
-        
-        # Add selected styling wrapper
-        if is_selected:
-            st.sidebar.markdown('<div class="selected-site">', unsafe_allow_html=True)
-        
-        # Create button with unique key based on site name
-        button_clicked = st.sidebar.button(
-            site_name, 
-            key=f"nav_btn_{site_name}",  # Dynamic key based on site name
-            use_container_width=True,
-            help=f"Switch to {site_name} analysis"  # Dynamic tooltip
-        )
-        
-        # Close selected styling wrapper
-        if is_selected:
-            st.sidebar.markdown('</div>', unsafe_allow_html=True)
-        
-        # Handle button click - automatically update selected site
-        if button_clicked:
-            st.session_state.selected_site = site_name
-            st.sidebar.success(f"✅ Switched to: {site_name}")
-            st.rerun()
+    st.write("### Select Site")
+    cols = st.columns(len(sites))
+    for i, site in enumerate(sites):
+        if cols[i].button(site):
+            st.session_state.selected_site = site
 
     site_code = st.session_state.selected_site
-    st.subheader(f"📊 Analysis for site: **{site_code}**")
+    st.subheader(f"📍 Current Site: {site_code}")
 
-    # --- Filter data ---
     df_raw = df_raw[df_raw['Site'] == site_code]
 
     # --- Monthly Comparison Summary ---
@@ -190,13 +78,30 @@ def render_chart_page():
         last_month_val = df_selected[(df_selected['Period'] == prior_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
+
         is_cost = item in cost_items
         rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
 
         if is_cost:
-            arrow, color = ("▲", "red") if this_month_val > last_month_val else ("▼", "green")
+            if this_month_val > last_month_val:
+                arrow = "▲"
+                color = "red"
+            elif this_month_val < last_month_val:
+                arrow = "▼"
+                color = "green"
+            else:
+                arrow = ""
+                color = "black"
         else:
-            arrow, color = ("▲", "green") if this_month_val > last_month_val else ("▼", "red")
+            if this_month_val > last_month_val:
+                arrow = "▲"
+                color = "green"
+            elif this_month_val < last_month_val:
+                arrow = "▼"
+                color = "red"
+            else:
+                arrow = ""
+                color = "black"
 
         comparison_data.append({
             "Item": item.split("]-")[-1],
@@ -211,7 +116,7 @@ def render_chart_page():
             "Rating": rating
         })
 
-    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
+    st.markdown(f"### 📊 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
@@ -227,6 +132,7 @@ def render_chart_page():
                     {data['Arrow']} {data['Pct']} = {data['Diff']}
                 </p>
             </div>
+            <br>
             """, unsafe_allow_html=True)
 
     # --- Line Chart ---
@@ -242,7 +148,21 @@ def render_chart_page():
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
 
-    fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', title="Monthly", markers=True)
+    fig_line = px.line(
+        line_df,
+        x='Period',
+        y='Amount',
+        color='Item Detail',
+        title="Monthly",
+        markers=True
+    )
+    fig_line.update_layout(
+        hovermode="x",
+        hoverdistance=100,
+        spikedistance=-1,
+        xaxis=dict(showspikes=True, spikecolor="red", spikethickness=2, spikemode="across"),
+        hoverlabel=dict(bgcolor="black", font_size=14, font_color="white")
+    )
     st.plotly_chart(fig_line, use_container_width=True)
 
     # --- Bar Chart ---
@@ -250,5 +170,14 @@ def render_chart_page():
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
 
-    fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', title="Yearly", text_auto='.2s')
+    bar_df['Item Detail Display'] = bar_df['Item Detail'].str.split(']-', 1).str[-1]
+    fig_bar = px.bar(
+        bar_df,
+        x='Year',
+        y='Amount',
+        color='Item Detail Display',
+        title="Yearly",
+        text_auto='.2s'
+    )
+    fig_bar.update_layout(xaxis_title="Year", yaxis_title="Total Amount (THB)")
     st.plotly_chart(fig_bar, use_container_width=True)
