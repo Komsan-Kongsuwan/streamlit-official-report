@@ -14,44 +14,84 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single styled button per site ---
+    # --- Sidebar: Streamlit page navigation styled buttons ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
         st.session_state.selected_site = sites[0]
 
+    # Custom CSS for exact Streamlit page navigation styling
+    st.sidebar.markdown("""
+    <style>
+    /* Reset button container margins */
+    .stButton {
+        margin: 0.125rem 0 !important;
+    }
+    
+    /* Style buttons to match Streamlit page navigation exactly */
+    .stButton > button {
+        width: 100% !important;
+        padding: 0.5rem 0.75rem !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        background-color: transparent !important;
+        color: rgb(49, 51, 63) !important;
+        text-align: left !important;
+        font-size: 0.875rem !important;
+        font-weight: 400 !important;
+        line-height: 1.25rem !important;
+        transition: all 0.2s ease !important;
+        box-shadow: none !important;
+        border-left: 4px solid transparent !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: rgba(151, 166, 195, 0.15) !important;
+        color: rgb(49, 51, 63) !important;
+        border-color: transparent !important;
+    }
+    
+    .stButton > button:focus {
+        box-shadow: none !important;
+        outline: none !important;
+    }
+    
+    .stButton > button:active {
+        background-color: rgba(151, 166, 195, 0.25) !important;
+    }
+    
+    /* Selected state styling */
+    .selected-site button {
+        background-color: rgba(255, 75, 75, 0.1) !important;
+        color: rgb(255, 75, 75) !important;
+        font-weight: 600 !important;
+        border-left: 4px solid rgb(255, 75, 75) !important;
+    }
+    
+    .selected-site button:hover {
+        background-color: rgba(255, 75, 75, 0.15) !important;
+        color: rgb(255, 75, 75) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Create navigation buttons
     for site in sites:
         is_selected = site == st.session_state.selected_site
-        btn_clicked = st.sidebar.button(site, key=f"btn_{site}", use_container_width=True)
-
-        if btn_clicked:
+        
+        # Add selected class to container if this site is selected
+        if is_selected:
+            st.sidebar.markdown('<div class="selected-site">', unsafe_allow_html=True)
+        
+        clicked = st.sidebar.button(site, key=f"site_btn_{site}", use_container_width=True)
+        
+        if is_selected:
+            st.sidebar.markdown('</div>', unsafe_allow_html=True)
+        
+        if clicked:
             st.session_state.selected_site = site
-
-        # Style the button to mimic Streamlit page button with minimal spacing
-        st.sidebar.markdown(
-            f"""
-            <style>
-            /* Reduce spacing of the whole button container */
-            div.stButton {{
-                margin: 2px 0 !important;   /* smaller gap between buttons */
-                padding: 0 !important;      /* remove extra container padding */
-            }}
-            div.stButton > button:first-child {{
-                border-radius: 12px;
-                background-color: {"#0d6efd" if is_selected else "#f9f9f9"};
-                color: {"white" if is_selected else "#333"};
-                font-weight: {"bold" if is_selected else "normal"};
-                box-shadow: {"inset 0 0 0 2px #0d6efd" if is_selected else "0 2px 4px rgba(0,0,0,0.1)"};
-                padding: 8px 12px;
-            }}
-            div.stButton > button:first-child:hover {{
-                background-color: #e0f0ff;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+            st.rerun()
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
