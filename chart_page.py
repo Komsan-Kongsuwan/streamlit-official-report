@@ -14,17 +14,27 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar Site Selector ---
+    # --- Sidebar Site Selector as Buttons ---
     st.sidebar.header("📍 Select Sites")
     sites = sorted(df_raw['Site'].dropna().unique())
-    selected_sites = st.sidebar.multiselect(
-        "Sites",
-        options=sites,
-        default=sites[:2]
-    )
+
+    # Initialize selection in session_state
+    if "selected_sites" not in st.session_state:
+        st.session_state.selected_sites = set()
+
+    # Display buttons for each site
+    for site in sites:
+        if site in st.session_state.selected_sites:
+            if st.sidebar.button(f"✅ {site}"):
+                st.session_state.selected_sites.remove(site)
+        else:
+            if st.sidebar.button(f"⬜ {site}"):
+                st.session_state.selected_sites.add(site)
+
+    selected_sites = list(st.session_state.selected_sites)
 
     if not selected_sites:
-        st.info("Select at least one site from the sidebar.")
+        st.info("Select at least one site from the sidebar buttons.")
         st.stop()
 
     # --- Filter data ---
