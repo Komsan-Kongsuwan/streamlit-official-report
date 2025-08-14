@@ -14,21 +14,38 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Site Selection Buttons ---
+    # --- Multi-select slicer for Site ---
     sites = sorted(df_raw['Site'].unique())
-    if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # Default to first site
 
-    st.write("### Select Site")
-    cols = st.columns(len(sites))
-    for i, site in enumerate(sites):
-        if cols[i].button(site):
-            st.session_state.selected_site = site
+    st.markdown(
+        """
+        <style>
+        .scroll-container {
+            height: 250px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    site_code = st.session_state.selected_site
-    st.subheader(f"📍 Current Site: {site_code}")
+    selected_sites = []
+    st.markdown('<div class="scroll-container">', unsafe_allow_html=True)
+    for site in sites:
+        if st.checkbox(site, value=(site == sites[0]), key=f"chk_{site}"):
+            selected_sites.append(site)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    df_raw = df_raw[df_raw['Site'] == site_code]
+    if not selected_sites:
+        st.warning("⚠️ Please select at least one site.")
+        st.stop()
+
+    # Filter dataframe by selected sites
+    df_raw = df_raw[df_raw['Site'].isin(selected_sites)]
 
     # --- Monthly Comparison Summary ---
     item_order = [
@@ -54,7 +71,7 @@ def render_chart_page():
             elif pct <= 10: return "🚨"
             elif pct <= 20: return "🚨🚨"
             elif pct <= 30: return "🚨🚨🚨"
-            else: return "🚨🚨🚨🚨"
+            else: return "🚨🚨🚨🚨" 
         else:
             if this_month_val > 0:
                 if pct > 50: return "⭐⭐⭐⭐"
@@ -116,7 +133,7 @@ def render_chart_page():
             "Rating": rating
         })
 
-    st.markdown(f"### 📊 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
+    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
@@ -133,7 +150,7 @@ def render_chart_page():
                 </p>
             </div>
             <br>
-            """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)    
 
     # --- Line Chart ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
@@ -143,8 +160,8 @@ def render_chart_page():
         st.stop()
 
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
-    st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
 
+    st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
 
@@ -168,9 +185,11 @@ def render_chart_page():
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
+        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() \
+        .sort_values(by='Amount', ascending=False)
 
     bar_df['Item Detail Display'] = bar_df['Item Detail'].str.split(']-', 1).str[-1]
+
     fig_bar = px.bar(
         bar_df,
         x='Year',
@@ -179,5 +198,8 @@ def render_chart_page():
         title="Yearly",
         text_auto='.2s'
     )
-    fig_bar.update_layout(xaxis_title="Year", yaxis_title="Total Amount (THB)")
+    fig_bar.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Total Amount (THB)"
+    )
     st.plotly_chart(fig_bar, use_container_width=True)
