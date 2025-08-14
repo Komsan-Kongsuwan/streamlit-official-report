@@ -14,21 +14,18 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Use native radio buttons for site selection (matches page buttons) ---
+    # --- Sidebar: push buttons like Streamlit pages ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
         st.session_state.selected_site = sites[0]
 
-    selected_site = st.sidebar.radio(
-        "Select Site",
-        sites,
-        index=sites.index(st.session_state.selected_site),
-        key="site_radio"
-    )
+    for site in sites:
+        if st.sidebar.button(site, key=f"btn_{site}"):
+            st.session_state.selected_site = site
+            st.experimental_rerun()  # mimic Streamlit page button behavior
 
-    st.session_state.selected_site = selected_site
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
 
