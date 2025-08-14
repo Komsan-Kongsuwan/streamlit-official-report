@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page():
-    st.set_page_config(layout="wide")  # make it roomy
+    st.set_page_config(layout="wide")  # bigger workspace
 
     st.title("🕵️‍♂️ Official Report Analysis")
 
@@ -16,8 +16,13 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar slicer ---
+    # --- Sidebar Slicer with session_state ---
     st.sidebar.header("📌 Filter by Site")
+
+    # Initialize session state slicer if not exists
+    if "selected_sites" not in st.session_state:
+        st.session_state.selected_sites = []
+
     st.sidebar.markdown(
         """
         <style>
@@ -35,13 +40,18 @@ def render_chart_page():
     )
 
     sites = sorted(df_raw['Site'].unique())
-    selected_sites = []
 
+    # Scrollable checkbox list
+    selected_sites = []
     st.sidebar.markdown('<div class="scroll-slicer">', unsafe_allow_html=True)
     for site in sites:
-        if st.sidebar.checkbox(site, value=(site == sites[0]), key=f"chk_{site}"):
+        default_checked = (site in st.session_state.selected_sites) or (not st.session_state.selected_sites and site == sites[0])
+        if st.sidebar.checkbox(site, value=default_checked, key=f"chk_{site}"):
             selected_sites.append(site)
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
+
+    # Save selection in session_state so all pages can read it
+    st.session_state.selected_sites = selected_sites
 
     if not selected_sites:
         st.warning("⚠️ Please select at least one site.")
