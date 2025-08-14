@@ -24,15 +24,23 @@ def render_chart_page():
     # Custom CSS for exact Streamlit page navigation styling
     st.sidebar.markdown("""
     <style>
-    /* Reset button container margins */
+    /* Minimize gaps between buttons */
     .stButton {
-        margin: 0.125rem 0 !important;
+        margin: 0 !important;
+        margin-bottom: 0.125rem !important;
+        padding: 0 !important;
+    }
+    
+    /* Remove default spacing from button containers */
+    .stButton + .stButton {
+        margin-top: 0 !important;
     }
     
     /* Style buttons to match Streamlit page navigation exactly */
     .stButton > button {
         width: 100% !important;
         padding: 0.5rem 0.75rem !important;
+        margin: 0 !important;
         border: none !important;
         border-radius: 0.5rem !important;
         background-color: transparent !important;
@@ -62,11 +70,18 @@ def render_chart_page():
     }
     
     /* Selected state styling */
+    .selected-site {
+        margin: 0 !important;
+        margin-bottom: 0.125rem !important;
+        padding: 0 !important;
+    }
+    
     .selected-site button {
         background-color: rgba(255, 75, 75, 0.1) !important;
         color: rgb(255, 75, 75) !important;
         font-weight: 600 !important;
         border-left: 4px solid rgb(255, 75, 75) !important;
+        margin: 0 !important;
     }
     
     .selected-site button:hover {
