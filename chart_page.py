@@ -14,16 +14,50 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons ---
+    # --- Sidebar: Single selection buttons (styled like pages buttons) ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
+    # Ensure default selection
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default to first site
+        st.session_state.selected_site = sites[0]
 
-    for site in sites:
-        if st.sidebar.button(site, use_container_width=True):
-            st.session_state.selected_site = site
+    # Create radio buttons for site selection
+    selected_site = st.sidebar.radio(
+        "",
+        options=sites,
+        index=sites.index(st.session_state.selected_site),
+        key="selected_site"
+    )
+
+    # Inject custom CSS to style radio buttons like Streamlit page buttons
+    st.markdown(
+        """
+        <style>
+        /* Make radio buttons full-width with padding and rounded corners */
+        div[role="radiogroup"] > label {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        div[role="radiogroup"] > label:hover {
+            background-color: #e0f0ff;
+        }
+        div[role="radiogroup"] > label[aria-checked="true"] {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
