@@ -14,16 +14,40 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons ---
+    # --- Sidebar: Single selection styled buttons ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default to first site
+        st.session_state.selected_site = sites[0]  # default first site
 
     for site in sites:
-        if st.sidebar.button(site, use_container_width=True):
-            st.session_state.selected_site = site
+        is_selected = (site == st.session_state.selected_site)
+        button_color = "#4CAF50" if is_selected else "#f0f0f0"
+        font_color = "white" if is_selected else "black"
+        button_html = f"""
+        <form action="?site={site}" method="get">
+            <button type="submit" style="
+                background-color:{button_color};
+                color:{font_color};
+                border:none;
+                padding:8px 15px;
+                text-align:left;
+                text-decoration:none;
+                display:block;
+                width:100%;
+                border-radius:6px;
+                margin-bottom:5px;
+                cursor:pointer;
+            ">{site}</button>
+        </form>
+        """
+        st.sidebar.markdown(button_html, unsafe_allow_html=True)
+
+    # --- Read ?site= parameter ---
+    query_params = st.query_params
+    if "site" in query_params:
+        st.session_state.selected_site = query_params["site"]
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
