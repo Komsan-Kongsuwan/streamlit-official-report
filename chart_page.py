@@ -14,7 +14,7 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single styled clickable buttons for site selection ---
+    # --- Sidebar: Single styled button per site ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
@@ -23,27 +23,31 @@ def render_chart_page():
 
     for site in sites:
         is_selected = site == st.session_state.selected_site
-        button_html = f"""
-        <div style="
-            width:100%;
-            padding:8px 12px;
-            margin-bottom:4px;
-            border-radius:12px;
-            box-shadow: {'inset 0 0 0 2px #0d6efd' if is_selected else '0 2px 4px rgba(0,0,0,0.1)'};
-            background-color: {'#0d6efd' if is_selected else '#f9f9f9'};
-            color: {'white' if is_selected else '#333'};
-            font-weight: {'bold' if is_selected else 'normal'};
-            text-align:center;
-            cursor:pointer;
-            transition: all 0.2s ease-in-out;
-        ">
-            {site}
-        </div>
-        """
-        # Use invisible form submit trick to detect clicks
-        if st.sidebar.markdown(f"<form action='?selected={site}'>{button_html}<input type='submit' style='display:none'></form>", unsafe_allow_html=True):
+        btn_clicked = st.sidebar.button(site, key=f"btn_{site}", use_container_width=True)
+
+        if btn_clicked:
             st.session_state.selected_site = site
-            st.experimental_rerun()
+
+        # Style the button to mimic Streamlit page button
+        st.sidebar.markdown(
+            f"""
+            <style>
+            div.stButton > button:first-child {{
+                border-radius: 12px;
+                background-color: {"#0d6efd" if is_selected else "#f9f9f9"};
+                color: {"white" if is_selected else "#333"};
+                font-weight: {"bold" if is_selected else "normal"};
+                box-shadow: {"inset 0 0 0 2px #0d6efd" if is_selected else "0 2px 4px rgba(0,0,0,0.1)"};
+                padding: 8px 12px;
+                margin-bottom: 4px;
+            }}
+            div.stButton > button:first-child:hover {{
+                background-color: #e0f0ff;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
