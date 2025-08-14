@@ -14,40 +14,50 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection styled buttons ---
+    # --- Sidebar: Single selection buttons (styled like pages buttons) ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
+    # Ensure default selection
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default first site
+        st.session_state.selected_site = sites[0]
 
-    for site in sites:
-        is_selected = (site == st.session_state.selected_site)
-        button_color = "#4CAF50" if is_selected else "#f0f0f0"
-        font_color = "white" if is_selected else "black"
-        button_html = f"""
-        <form action="?site={site}" method="get">
-            <button type="submit" style="
-                background-color:{button_color};
-                color:{font_color};
-                border:none;
-                padding:8px 15px;
-                text-align:left;
-                text-decoration:none;
-                display:block;
-                width:100%;
-                border-radius:6px;
-                margin-bottom:5px;
-                cursor:pointer;
-            ">{site}</button>
-        </form>
+    # Create radio buttons for site selection
+    selected_site = st.sidebar.radio(
+        "",
+        options=sites,
+        index=sites.index(st.session_state.selected_site),
+        key="selected_site"
+    )
+
+    # Inject custom CSS to style radio buttons like Streamlit page buttons
+    st.markdown(
         """
-        st.sidebar.markdown(button_html, unsafe_allow_html=True)
-
-    # --- Read ?site= parameter ---
-    query_params = st.query_params
-    if "site" in query_params:
-        st.session_state.selected_site = query_params["site"]
+        <style>
+        /* Make radio buttons full-width with padding and rounded corners */
+        div[role="radiogroup"] > label {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        div[role="radiogroup"] > label:hover {
+            background-color: #e0f0ff;
+        }
+        div[role="radiogroup"] > label[aria-checked="true"] {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
