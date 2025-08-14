@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page():
+    st.set_page_config(layout="wide")  # make it roomy
+
     st.title("🕵️‍♂️ Official Report Analysis")
 
     if "official_data" not in st.session_state:
@@ -14,17 +16,16 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Multi-select slicer for Site ---
-    sites = sorted(df_raw['Site'].unique())
-
-    st.markdown(
+    # --- Sidebar slicer ---
+    st.sidebar.header("📌 Filter by Site")
+    st.sidebar.markdown(
         """
         <style>
-        .scroll-container {
-            height: 250px;
+        .scroll-slicer {
+            height: 300px;
             overflow-y: auto;
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 6px;
+            border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #f9f9f9;
         }
@@ -33,12 +34,14 @@ def render_chart_page():
         unsafe_allow_html=True
     )
 
+    sites = sorted(df_raw['Site'].unique())
     selected_sites = []
-    st.markdown('<div class="scroll-container">', unsafe_allow_html=True)
+
+    st.sidebar.markdown('<div class="scroll-slicer">', unsafe_allow_html=True)
     for site in sites:
-        if st.checkbox(site, value=(site == sites[0]), key=f"chk_{site}"):
+        if st.sidebar.checkbox(site, value=(site == sites[0]), key=f"chk_{site}"):
             selected_sites.append(site)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
     if not selected_sites:
         st.warning("⚠️ Please select at least one site.")
