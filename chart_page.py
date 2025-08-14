@@ -14,45 +14,21 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Scrollable slicer for site selection ---
+    # --- Sidebar Site Selector ---
+    st.sidebar.header("📍 Select Sites")
     sites = sorted(df_raw['Site'].dropna().unique())
-    if "selected_sites" not in st.session_state:
-        st.session_state.selected_sites = sites[:2]
+    selected_sites = st.sidebar.multiselect(
+        "Sites",
+        options=sites,
+        default=sites[:2]
+    )
 
-    st.subheader("📍 Select Sites")
-    st.markdown("""
-        <style>
-        .checkbox-container {
-            max-height: 250px;
-            overflow-y: auto;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fafafa;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    selected_sites_temp = st.session_state.selected_sites.copy()
-    with st.container():
-        st.markdown('<div class="checkbox-container">', unsafe_allow_html=True)
-        for site in sites:
-            checked = site in selected_sites_temp
-            if st.checkbox(site, value=checked, key=f"chk_{site}"):
-                if site not in selected_sites_temp:
-                    selected_sites_temp.append(site)
-            else:
-                if site in selected_sites_temp:
-                    selected_sites_temp.remove(site)
-        st.markdown('</div>', unsafe_allow_html=True)
-    st.session_state.selected_sites = selected_sites_temp
-
-    if not st.session_state.selected_sites:
-        st.info("Select at least one site.")
+    if not selected_sites:
+        st.info("Select at least one site from the sidebar.")
         st.stop()
 
     # --- Filter data ---
-    df_raw = df_raw[df_raw['Site'].isin(st.session_state.selected_sites)]
+    df_raw = df_raw[df_raw['Site'].isin(selected_sites)]
 
     # --- Monthly Comparison Summary ---
     item_order = [
