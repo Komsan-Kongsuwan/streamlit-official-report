@@ -14,13 +14,32 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Streamlit page navigation styled buttons ---
+    # --- Automated Sidebar Navigation: Dynamic site buttons ---
     st.sidebar.header("📍 Select Site")
-    sites = sorted(df_raw['Site'].dropna().unique())
-
-    if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]
-
+    
+    # Automatically extract unique sites from data
+    available_sites = sorted(df_raw['Site'].dropna().unique())
+    
+    # Handle dynamic site changes (new sites added/removed)
+    if "available_sites_cache" not in st.session_state:
+        st.session_state.available_sites_cache = available_sites
+    elif st.session_state.available_sites_cache != available_sites:
+        st.session_state.available_sites_cache = available_sites
+        st.info(f"🔄 Site list updated! Found {len(available_sites)} sites: {', '.join(available_sites)}")
+    
+    # Auto-initialize selected site
+    if "selected_site" not in st.session_state or st.session_state.selected_site not in available_sites:
+        st.session_state.selected_site = available_sites[0] if available_sites else None
+        if available_sites:
+            st.success(f"🎯 Auto-selected first available site: {st.session_state.selected_site}")
+    
+    if not available_sites:
+        st.sidebar.warning("⚠️ No sites found in data")
+        st.stop()
+    
+    # Display site count info
+    st.sidebar.caption(f"📊 Found {len(available_sites)} sites in data")
+    
     # Custom CSS for exact Streamlit page navigation styling
     st.sidebar.markdown("""
     <style>
@@ -91,21 +110,30 @@ def render_chart_page():
     </style>
     """, unsafe_allow_html=True)
 
-    # Create navigation buttons
-    for site in sites:
-        is_selected = site == st.session_state.selected_site
+    # Automatically generate navigation buttons for each site
+    for site_name in available_sites:
+        is_selected = site_name == st.session_state.selected_site
         
-        # Add selected class to container if this site is selected
+        # Add selected styling wrapper
         if is_selected:
             st.sidebar.markdown('<div class="selected-site">', unsafe_allow_html=True)
         
-        clicked = st.sidebar.button(site, key=f"site_btn_{site}", use_container_width=True)
+        # Create button with unique key based on site name
+        button_clicked = st.sidebar.button(
+            site_name, 
+            key=f"nav_btn_{site_name}",  # Dynamic key based on site name
+            use_container_width=True,
+            help=f"Switch to {site_name} analysis"  # Dynamic tooltip
+        )
         
+        # Close selected styling wrapper
         if is_selected:
             st.sidebar.markdown('</div>', unsafe_allow_html=True)
         
-        if clicked:
-            st.session_state.selected_site = site
+        # Handle button click - automatically update selected site
+        if button_clicked:
+            st.session_state.selected_site = site_name
+            st.sidebar.success(f"✅ Switched to: {site_name}")
             st.rerun()
 
     site_code = st.session_state.selected_site
