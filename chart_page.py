@@ -14,45 +14,21 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single styled button per site ---
+    # --- Sidebar: Use native radio buttons for site selection (matches page buttons) ---
     st.sidebar.header("📍 Select Site")
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
         st.session_state.selected_site = sites[0]
 
-    for site in sites:
-        is_selected = site == st.session_state.selected_site
-        btn_clicked = st.sidebar.button(site, key=f"btn_{site}", use_container_width=True)
+    selected_site = st.sidebar.radio(
+        "Select Site",
+        sites,
+        index=sites.index(st.session_state.selected_site),
+        key="site_radio"
+    )
 
-        if btn_clicked:
-            st.session_state.selected_site = site
-
-        # Style the button to mimic Streamlit page button with minimal spacing
-        st.sidebar.markdown(
-            f"""
-            <style>
-            /* Reduce spacing of the whole button container */
-            div.stButton {{
-                margin: 2px 0 !important;   /* smaller gap between buttons */
-                padding: 0 !important;      /* remove extra container padding */
-            }}
-            div.stButton > button:first-child {{
-                border-radius: 12px;
-                background-color: {"#0d6efd" if is_selected else "#f9f9f9"};
-                color: {"white" if is_selected else "#333"};
-                font-weight: {"bold" if is_selected else "normal"};
-                box-shadow: {"inset 0 0 0 2px #0d6efd" if is_selected else "0 2px 4px rgba(0,0,0,0.1)"};
-                padding: 8px 12px;
-            }}
-            div.stButton > button:first-child:hover {{
-                background-color: #e0f0ff;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-
+    st.session_state.selected_site = selected_site
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
 
