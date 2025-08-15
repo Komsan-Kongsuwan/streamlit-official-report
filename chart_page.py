@@ -15,22 +15,7 @@ def render_chart_page():
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
     # --- Sidebar: Single selection buttons in scrollable slicer ---
-    st.sidebar.header("📍 Select Site")
 
-    st.markdown("""
-        <style>
-        .site-button-container {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-        div.stButton > button {
-            margin-bottom: 4px;
-            padding-top: 6px;
-            padding-bottom: 6px;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
     sites = sorted(df_raw['Site'].dropna().unique())
 
