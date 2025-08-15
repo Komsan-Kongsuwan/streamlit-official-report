@@ -22,12 +22,12 @@ def render_chart_page():
         .site-button-container {
             max-height: 300px;
             overflow-y: auto;
-            padding-right: 1px;
+            padding-right: 8px;
         }
         div.stButton > button {
-            margin-bottom: 1px;
-            padding-top: 1px;
-            padding-bottom: 1px;
+            margin-bottom: 4px;
+            padding-top: 6px;
+            padding-bottom: 6px;
         }
         </style>
     """, unsafe_allow_html=True)
