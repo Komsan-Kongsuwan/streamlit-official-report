@@ -3,33 +3,69 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-def render_chart_page():
-    st.title("🕵️‍♂️ Official Report Analysis")
+def render_chart_page(site_code=None):
+    st.title(f"🕵️‍♂️ Official Report Analysis")
 
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
         st.stop()
 
-    df_raw = st.session_state["official_data"].copy()
-    df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
-    df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
+    # --- Sidebar Site Selector (Excel slicer style) ---
+    st.markdown(
+        """
+        <style>
+        /* Sidebar radio buttons as slicer buttons */
+        div[data-baseweb="radio"] > div {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        div[data-baseweb="radio"] label {
+            background-color: #f0f2f6;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            border: 1px solid #ccc;
+        }
+        div[data-baseweb="radio"] label:hover {
+            background-color: #e0e2e6;
+        }
+        /* Selected button style */
+        div[data-baseweb="radio"] input:checked + div {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: bold;
+            border-color: #4CAF50;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # --- Sidebar: Single selection buttons ---
     st.sidebar.header("📍 Select Site")
-    sites = sorted(df_raw['Site'].dropna().unique())
+    sites = sorted(st.session_state["official_data"]['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default to first site
+        st.session_state.selected_site = sites[0]
 
-    for site in sites:
-        if st.sidebar.button(site, use_container_width=True):
-            st.session_state.selected_site = site
+    selected_site = st.sidebar.radio(
+        "Site",
+        options=sites,
+        index=sites.index(st.session_state.selected_site),
+        key="selected_site_radio",
+        label_visibility="collapsed"
+    )
 
+    st.session_state.selected_site = selected_site
     site_code = st.session_state.selected_site
-    st.subheader(f"📊 Analysis for site: **{site_code}**")
 
-    # --- Filter data ---
+    # --- Data Filtering ---
+    df_raw = st.session_state["official_data"].copy()
     df_raw = df_raw[df_raw['Site'] == site_code]
+    df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
+    df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
     # --- Monthly Comparison Summary ---
     item_order = [
@@ -55,7 +91,7 @@ def render_chart_page():
             elif pct <= 10: return "🚨"
             elif pct <= 20: return "🚨🚨"
             elif pct <= 30: return "🚨🚨🚨"
-            else: return "🚨🚨🚨🚨"
+            else: return "🚨🚨🚨🚨" 
         else:
             if this_month_val > 0:
                 if pct > 50: return "⭐⭐⭐⭐"
@@ -72,20 +108,38 @@ def render_chart_page():
                 elif this_month_val >= -100000: return "🚨🚨🚨"
                 elif this_month_val >= -500000: return "🚨🚨🚨🚨"
                 else: return "🚨🚨🚨🚨"
-
+                
     comparison_data = []
     for item in item_order:
         this_month_val = df_selected[(df_selected['Period'] == latest_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         last_month_val = df_selected[(df_selected['Period'] == prior_month) & (df_selected['Item Detail'] == item)]['Amount'].sum()
         diff = this_month_val - last_month_val
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
+
         is_cost = item in cost_items
         rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
 
+        # Arrow + color
         if is_cost:
-            arrow, color = ("▲", "red") if this_month_val > last_month_val else ("▼", "green")
+            if this_month_val > last_month_val:
+                arrow = "▲"
+                color = "red"
+            elif this_month_val < last_month_val:
+                arrow = "▼"
+                color = "green"
+            else:
+                arrow = ""
+                color = "black"
         else:
-            arrow, color = ("▲", "green") if this_month_val > last_month_val else ("▼", "red")
+            if this_month_val > last_month_val:
+                arrow = "▲"
+                color = "green"
+            elif this_month_val < last_month_val:
+                arrow = "▼"
+                color = "red"
+            else:
+                arrow = ""
+                color = "black"
 
         comparison_data.append({
             "Item": item.split("]-")[-1],
@@ -116,6 +170,7 @@ def render_chart_page():
                     {data['Arrow']} {data['Pct']} = {data['Diff']}
                 </p>
             </div>
+            <br>
             """, unsafe_allow_html=True)
 
     # --- Line Chart ---
@@ -124,20 +179,43 @@ def render_chart_page():
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
-
+        
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
     st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
-
+    
     line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
         .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
 
-    fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', title="Monthly", markers=True)
+    fig_line = px.line(
+        line_df,
+        x='Period',
+        y='Amount',
+        color='Item Detail',
+        title="Monthly",
+        markers=True
+    )
+    fig_line.update_layout(
+        hovermode="x",
+        hoverdistance=100,
+        spikedistance=-1,
+        xaxis=dict(showspikes=True, spikecolor="red", spikethickness=2, spikemode="across"),
+        hoverlabel=dict(bgcolor="black", font_size=14, font_color="white")
+    )
     st.plotly_chart(fig_line, use_container_width=True)
 
     # --- Bar Chart ---
     st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
     bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
+        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum() \
+        .sort_values(by='Amount', ascending=False)
 
-    fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', title="Yearly", text_auto='.2s')
+    fig_bar = px.bar(
+        bar_df,
+        x='Year',
+        y='Amount',
+        color='Item Detail',
+        title="Yearly",
+        text_auto='.2s'
+    )
+    fig_bar.update_layout(xaxis_title="Year", yaxis_title="Total Amount (THB)")
     st.plotly_chart(fig_bar, use_container_width=True)
