@@ -23,12 +23,13 @@ def render_chart_page():
             max-height: 300px;
             overflow-y: auto;
             padding-right: 8px;
+            fontsize: 30px
         }
         div.stButton > button {
             margin-bottom: 4px;
             padding-top: 6px;
             padding-bottom: 6px;
-            fontsize: 8 px;
+            fontsize: 20 px;
         }
         </style>
     """, unsafe_allow_html=True)
