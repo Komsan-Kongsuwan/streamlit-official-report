@@ -7,6 +7,7 @@ from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 import io
 import plotly.express as px
+from chart_page import render_chart_page
 
 st.set_page_config(page_title="Monthly Official Report", layout="wide")
 st.title("📊 Official Monthly Report")
@@ -199,3 +200,4 @@ if uploaded_files:
 
     # 👉 Save to session for use in Chart page
     st.session_state["official_data"] = df_raw
+    render_chart_page()
