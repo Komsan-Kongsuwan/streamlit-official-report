@@ -29,7 +29,7 @@ def render_chart_page():
             margin-bottom: 4px;
             padding-top: 6px;
             padding-bottom: 6px;
-            fontsize: 20 px;
+            fontsize: 20px;
         }
         </style>
     """, unsafe_allow_html=True)
