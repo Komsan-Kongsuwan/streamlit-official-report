@@ -14,7 +14,7 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons in scrollable slicer ---
+    # --- Sidebar: Scrollable slicer-style buttons ---
     st.sidebar.header("📍 Select Site")
 
     st.markdown("""
@@ -24,10 +24,16 @@ def render_chart_page():
             overflow-y: auto;
             padding-right: 8px;
         }
-        div.stButton > button {
+        div[data-testid="stButton"] > button {
             margin-bottom: 4px;
             padding-top: 6px;
             padding-bottom: 6px;
+            width: 100%;
+        }
+        .selected-site {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: bold !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -39,8 +45,20 @@ def render_chart_page():
 
     st.sidebar.markdown('<div class="site-button-container">', unsafe_allow_html=True)
     for site in sites:
-        if st.sidebar.button(site, use_container_width=True):
-            st.session_state.selected_site = site
+        if site == st.session_state.selected_site:
+            button_label = f"✅ {site}"
+            button_clicked = st.sidebar.button(button_label, key=f"site_{site}")
+            st.markdown(f"""
+                <script>
+                var btn = window.parent.document.querySelector('button[kind="secondary"][aria-label="{button_label}"]');
+                if (btn) {{
+                    btn.classList.add("selected-site");
+                }}
+                </script>
+            """, unsafe_allow_html=True)
+        else:
+            if st.sidebar.button(site, key=f"site_{site}"):
+                st.session_state.selected_site = site
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
     site_code = st.session_state.selected_site
