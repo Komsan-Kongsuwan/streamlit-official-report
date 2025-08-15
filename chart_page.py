@@ -25,9 +25,9 @@ def render_chart_page():
             padding-right: 8px;
         }
         div.stButton > button {
-            margin-bottom: 4px;
-            padding-top: 6px;
-            padding-bottom: 6px;
+            margin-bottom: 1px;
+            padding-top: 1px;
+            padding-bottom: 1px;
         }
         </style>
     """, unsafe_allow_html=True)
