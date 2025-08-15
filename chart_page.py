@@ -14,16 +14,34 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons ---
+    # --- Sidebar: Single selection buttons in scrollable slicer ---
     st.sidebar.header("📍 Select Site")
+
+    st.markdown("""
+        <style>
+        .site-button-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        div.stButton > button {
+            margin-bottom: 4px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default to first site
+        st.session_state.selected_site = sites[0]
 
+    st.sidebar.markdown('<div class="site-button-container">', unsafe_allow_html=True)
     for site in sites:
         if st.sidebar.button(site, use_container_width=True):
             st.session_state.selected_site = site
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
@@ -106,7 +124,7 @@ def render_chart_page():
         cols = st.columns(4)
         for col, data in zip(cols, row):
             col.markdown(f"""
-            <div style="border:2px solid #ccc; border-radius:12px; padding:1px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
+            <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
                 <h5 style="margin-bottom:8px; color:#333;">
                     {data['Item']} {data['Rating']}
                 </h5>
