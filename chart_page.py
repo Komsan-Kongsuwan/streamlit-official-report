@@ -14,16 +14,19 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons ---
-    st.sidebar.header("📍 Select Site")
+    # --- Sidebar: Single selection buttons in scrollable slicer ---
+
+
     sites = sorted(df_raw['Site'].dropna().unique())
 
     if "selected_site" not in st.session_state:
-        st.session_state.selected_site = sites[0]  # default to first site
+        st.session_state.selected_site = sites[0]
 
+    st.sidebar.markdown('<div class="site-button-container">', unsafe_allow_html=True)
     for site in sites:
         if st.sidebar.button(site, use_container_width=True):
             st.session_state.selected_site = site
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
