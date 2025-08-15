@@ -22,7 +22,7 @@ def render_chart_page():
         .site-button-container {
             max-height: 300px;
             overflow-y: auto;
-            padding-right: 8px;
+            padding-right: 1px;
         }
         div.stButton > button {
             margin-bottom: 1px;
