@@ -106,7 +106,7 @@ def render_chart_page():
         cols = st.columns(4)
         for col, data in zip(cols, row):
             col.markdown(f"""
-            <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
+            <div style="border:2px solid #ccc; border-radius:12px; padding:4px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
                 <h5 style="margin-bottom:8px; color:#333;">
                     {data['Item']} {data['Rating']}
                 </h5>
