@@ -8,7 +8,7 @@ def render_chart_page():
     st.markdown("""
         <style>
             .block-container {
-                padding-top: 4rem;
+                padding-top: 2rem;
             }
         </style>
     """, unsafe_allow_html=True)
