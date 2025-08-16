@@ -172,7 +172,7 @@ def render_chart_page():
         <div style="border:1px solid #ccc; border-radius:6px; padding:6px;
                     background-color:#f9f9f9; box-shadow:1px 1px 3px rgba(0,0,0,0.1);
                     font-size:11px;">
-            <p style="font-size:10px; margin-bottom:4px; color:#333;">
+            <p style="font-size:10px; font-weight:bold; margin-bottom:4px; color:#333;">
                 {data['Item']} {data['Rating']}
             </p>
             <p style="margin:2px 0; font-size:12px;"><b>{data['Month2']}:</b> 
