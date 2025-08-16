@@ -119,7 +119,7 @@ def render_chart_page():
     cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
-        <div style="border:1px solid #ccc; border-radius:6px; padding:6px;
+        <div style="border:1px solid #ccc; border-radius:6px; padding:6px; margin:2px;
                     background-color:#f9f9f9; box-shadow:1px 1px 3px rgba(0,0,0,0.1);
                     font-size:11px;">
             <h5 style="font-size:12px; margin-bottom:4px; color:#333;">
@@ -133,6 +133,7 @@ def render_chart_page():
                 {data['Arrow']} {data['Pct']} = {data['Diff']}
             </p>
         </div>
+        <br>
         """, unsafe_allow_html=True)
 
 
