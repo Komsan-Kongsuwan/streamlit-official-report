@@ -206,9 +206,24 @@ def render_chart_page():
         )
         st.plotly_chart(fig_line, use_container_width=True)
     
+
+
+
     with col2:
         bar_df = df_site[df_site['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
         fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', text_auto='.2s')
-        fig_bar.update_layout(height=320, margin=dict(l=10, r=10, t=40, b=20))
+    
+        # Move legend to bottom
+        fig_bar.update_layout(
+            height=320,
+            margin=dict(l=10, r=10, t=40, b=40),  # add some bottom margin for legend
+            legend=dict(
+                orientation='h',    # horizontal legend
+                y=-0.2,             # vertical position (below plot)
+                x=0.0,              # horizontal start (left)
+                xanchor='left',
+                yanchor='top'
+            )
+        )
         st.plotly_chart(fig_bar, use_container_width=True)
