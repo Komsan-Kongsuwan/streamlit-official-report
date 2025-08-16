@@ -40,8 +40,6 @@ if uploaded_files:
         df_final = pd.concat(df_list, ignore_index=True)
         df_final['Amount'] = pd.to_numeric(df_final['Amount'], errors='coerce').fillna(0)
 
-
-
         corrections = {
             'Signboard TAX': 'Signboard Tax',
             'Common Expense': 'Common expense',
@@ -129,11 +127,6 @@ if uploaded_files:
         df_final['Site'] = df_final['Site'].astype(site_order)
         df_final = df_final.sort_values(by=['Site', 'Item Detail', 'Year'])
 
-
-
-
-
-        
         df_final['Month'] = df_final['Month'].astype(str).str.zfill(2)
         month_map = {f"{i:02d}": calendar.month_abbr[i] for i in range(1, 13)}
 
@@ -187,16 +180,23 @@ if uploaded_files:
         wb.save(final_buffer)
         final_buffer.seek(0)
 
-
         st.download_button(
             label="📥 Download Official Monthly Report",
             data=final_buffer,
             file_name="official_monthly_report.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-      
+
+    
     df_pivot, df_raw = generate_official_report(uploaded_files)
     format_and_download(df_pivot)
+
+    st.download_button(
+        label="📥 Download",
+        data=final_buffer,
+        file_name="df_raw.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )    
 
     # 👉 Save to session for use in Chart page
     st.session_state["official_data"] = df_raw
