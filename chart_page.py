@@ -21,11 +21,10 @@ def render_chart_page():
 
     st.markdown("""
         <style>
-            /* Sidebar buttons for site names */
-            section[data-testid="stSidebar"] button[kind="secondary"] {
-                font-size: 10px !important;   /* smaller font */
-                padding: 2px 6px !important;  /* tighter padding */
-                height: 24px !important;      /* shorter height */
+            section[data-testid="stSidebar"] .css-1abcde {
+                font-size: 10px !important;
+                height: 24px !important;
+                padding: 2px 6px !important;
                 border-radius: 6px !important;
             }
         </style>
