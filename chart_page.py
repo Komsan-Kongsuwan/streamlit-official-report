@@ -41,7 +41,13 @@ def render_chart_page():
 
 
     
-    
+        /* Remove vertical gaps between sidebar buttons */
+    section[data-testid="stSidebar"] div.stButton {
+        margin-top: 1px !important;
+        margin-bottom: 1px !important;
+        padding: 0 !important;
+    }
+
     
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report or load sample data first.")
