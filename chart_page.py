@@ -43,8 +43,8 @@ def render_chart_page():
     
         /* Remove vertical gaps between sidebar buttons */
     section[data-testid="stSidebar"] div.stButton {
-        margin-top: 1px !important;
-        margin-bottom: 1px !important;
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
         padding: 0 !important;
     }
 
