@@ -43,11 +43,7 @@ def render_chart_page():
         </style>
     """, unsafe_allow_html=True)
     
-    # Render buttons
-    for site in sites:
-        if st.sidebar.button(site, key=f"btn_{site}"):
-            st.session_state.selected_site = site
-
+ 
 
     
     if "official_data" not in st.session_state:
