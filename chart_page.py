@@ -110,54 +110,28 @@ def render_chart_page():
 
 
 
-    # --- Comparison Summary Inline ---
+    # --- Comparison Summary Inline (8 boxes in one line) ---
     st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
-    
-    # Wrap all comparison boxes in one horizontal flex container
-    st.markdown("<div class='comparison-inline'>", unsafe_allow_html=True)
-    
-    for data in comparison_data:
-        st.markdown(f"""
-        <div class="comparison-box">
-            <h5>{data['Item']} {data['Rating']}</h5>
-            <p><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
-            <p><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
-            <p style="color:{data['Color']}; font-weight:bold;">
+
+    cols = st.columns(8)  # 🔹 exactly 8 boxes in one row
+    for col, data in zip(cols, comparison_data):
+        col.markdown(f"""
+        <div style="border:1px solid #ccc; border-radius:6px; padding:6px;
+                    background-color:#f9f9f9; box-shadow:1px 1px 3px rgba(0,0,0,0.1);
+                    font-size:11px;">
+            <h5 style="font-size:12px; margin-bottom:4px; color:#333;">
+                {data['Item']} {data['Rating']}
+            </h5>
+            <p style="margin:2px 0; font-size:11px;"><b>{data['Month2']}:</b> 
+                <span style="color:green;">{data['Previous']}</span></p>
+            <p style="margin:2px 0; font-size:11px;"><b>{data['Month1']}:</b> 
+                <span style="color:blue;">{data['Current']}</span></p>
+            <p style="margin-top:4px; color:{data['Color']}; font-weight:bold; font-size:11px;">
                 {data['Arrow']} {data['Pct']} = {data['Diff']}
             </p>
         </div>
         """, unsafe_allow_html=True)
-    
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # --- CSS for inline layout ---
-    st.markdown("""
-        <style>
-        .comparison-inline {
-            display: flex;
-            flex-wrap: nowrap;   /* keep all in one line */
-            overflow-x: auto;    /* add scroll if too many */
-            gap: 8px;            /* small spacing between boxes */
-        }
-        .comparison-box {
-            min-width: 180px;    /* adjust box size */
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-            font-size: 12px;     /* smaller text for compact view */
-        }
-        .comparison-box h5 {
-            font-size: 14px;
-            margin: 0 0 4px 0;
-            color: #333;
-        }
-        .comparison-box p {
-            margin: 2px 0;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+
 
 
 
