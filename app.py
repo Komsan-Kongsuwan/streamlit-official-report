@@ -187,16 +187,8 @@ if uploaded_files:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-    
     df_pivot, df_raw = generate_official_report(uploaded_files)
-    format_and_download(df_pivot)
-
-    st.download_button(
-        label="📥 Download",
-        data=df_raw,
-        file_name="df_raw.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )    
+    format_and_download(df_pivot) 
 
     # 👉 Save to session for use in Chart page
     st.session_state["official_data"] = df_raw
