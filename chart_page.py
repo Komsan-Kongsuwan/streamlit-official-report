@@ -127,7 +127,7 @@ def render_chart_page():
             </h5>
             <p style="margin:2px 0; font-size:11px;"><b>{data['Month2']}:</b> 
                 <span style="color:green;">{data['Previous']}</span></p>
-            <p style="margin:2px 0; font-size:11px;"><b>{data['Month1']}:</b> 
+            <p style="margin:2px 0; font-size:15px;"><b>{data['Month1']}:</b> 
                 <span style="color:blue;">{data['Current']}</span></p>
             <p style="margin-top:4px; color:{data['Color']}; font-weight:bold; font-size:11px;">
                 {data['Arrow']} {data['Pct']} = {data['Diff']}
