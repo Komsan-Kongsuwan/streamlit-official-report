@@ -17,18 +17,21 @@ def render_chart_page():
     """, unsafe_allow_html=True)
 
 
+
+
     st.markdown("""
         <style>
-            /* Sidebar buttons */
-            div[data-testid="stSidebar"] div.stButton > button {
-                font-size: 8px !important;   /* smaller font */
+            /* Sidebar buttons for site names */
+            section[data-testid="stSidebar"] button[kind="secondary"] {
+                font-size: 10px !important;   /* smaller font */
                 padding: 2px 6px !important;  /* tighter padding */
-                height: 10px !important;      /* shorter height */
+                height: 24px !important;      /* shorter height */
                 border-radius: 6px !important;
             }
         </style>
     """, unsafe_allow_html=True)
 
+    
     
     
     if "official_data" not in st.session_state:
