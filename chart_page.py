@@ -26,7 +26,7 @@ def render_chart_page():
                 font-size: 14px !important;
                 padding: 0.1rem 0.25rem !important;
                 height: auto !important;      /* let it shrink naturally */
-                min-height: 22px !important;  /* force smaller baseline */
+                min-height: 44px !important;  /* force smaller baseline */
                 border-radius: 6px !important;
                 line-height: 1.2 !important;
             }
