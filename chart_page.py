@@ -23,7 +23,7 @@ def render_chart_page():
                 [data-testid="stSidebar"] button {
                     font-size: 10px !important;  /* smaller font */
                     padding: 2px 6px !important; /* smaller padding */
-                    height: 20px !important;     /* shorter button height */
+                    height: 10px !important;     /* shorter button height */
                     border-radius: 6px !important;
                 }
             </style>
