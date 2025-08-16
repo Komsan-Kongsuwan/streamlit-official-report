@@ -33,7 +33,7 @@ def render_chart_page():
     
             /* Also shrink the <p> text inside */
             section[data-testid="stSidebar"] div.stButton p {
-                font-size: 11px !important;
+                font-size: 14px !important;
                 margin: 0 !important;
             }
         </style>
