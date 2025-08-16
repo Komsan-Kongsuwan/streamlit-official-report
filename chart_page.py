@@ -127,9 +127,13 @@ def render_chart_page():
         line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
         fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', markers=True)
-        fig_line.update_layout(height=320, margin=dict(l=10, r=10, t=40, b=20))
+        fig_line.update_layout(
+            height=320,
+            margin=dict(l=10, r=10, t=40, b=20),
+            showlegend=False  # 🔹 remove legend
+        )
         st.plotly_chart(fig_line, use_container_width=True)
-
+    
     with col2:
         st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
         bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
