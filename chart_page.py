@@ -112,7 +112,7 @@ def render_chart_page():
             </div>
             """, unsafe_allow_html=True)
 
-    # --- Line & Bar Chart Side by Side ---
+    # --- Line & Bar Chart Side by Side (70:30 layout) ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail Chart", items, default=["[1045]-Revenue Total"])
     if not selected_items:
@@ -120,14 +120,14 @@ def render_chart_page():
         st.stop()
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([7, 3])  # 70% line chart, 30% bar chart
 
     with col1:
         st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
         line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
         fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', markers=True)
-        fig_line.update_layout(height=300, margin=dict(l=20, r=20, t=40, b=20))
+        fig_line.update_layout(height=320, margin=dict(l=10, r=10, t=40, b=20))
         st.plotly_chart(fig_line, use_container_width=True)
 
     with col2:
@@ -135,5 +135,5 @@ def render_chart_page():
         bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
         fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', text_auto='.2s')
-        fig_bar.update_layout(height=300, margin=dict(l=20, r=20, t=40, b=20))
+        fig_bar.update_layout(height=320, margin=dict(l=10, r=10, t=40, b=20))
         st.plotly_chart(fig_bar, use_container_width=True)
