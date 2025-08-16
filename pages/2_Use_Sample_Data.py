@@ -24,4 +24,4 @@ time.sleep(0.5)
 st.session_state["official_data"] = df
 progress.progress(100, text="✅ Done!")
 
-st.success("Sample data loaded successfully.")
+st.success("Sample data loaded successfully, Please go to Visualization page.")
