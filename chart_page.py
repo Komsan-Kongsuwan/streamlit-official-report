@@ -21,13 +21,20 @@ def render_chart_page():
 
     st.markdown("""
         <style>
-            /* Style all sidebar site buttons */
-            section[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {
-                font-size: 8px !important;   /* smaller font size */
-                padding: 2px 6px !important;  /* tighter padding */
-                height: 10px !important;      /* shorter button height */
+            /* Target only sidebar site buttons */
+            section[data-testid="stSidebar"] div.stButton > button {
+                font-size: 11px !important;
+                padding: 0.1rem 0.25rem !important;
+                height: auto !important;      /* let it shrink naturally */
+                min-height: 22px !important;  /* force smaller baseline */
                 border-radius: 6px !important;
-                line-height: 1 !important;
+                line-height: 1.2 !important;
+            }
+    
+            /* Also shrink the <p> text inside */
+            section[data-testid="stSidebar"] div.stButton p {
+                font-size: 11px !important;
+                margin: 0 !important;
             }
         </style>
     """, unsafe_allow_html=True)
