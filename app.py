@@ -193,7 +193,7 @@ if uploaded_files:
 
     st.download_button(
         label="📥 Download",
-        data=final_buffer,
+        data=df_raw,
         file_name="df_raw.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )    
