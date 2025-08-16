@@ -120,7 +120,7 @@ def render_chart_page():
         st.stop()
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
 
-    col1, col2 = st.columns([7, 3])  # 70% line chart, 30% bar chart
+    col1, col2 = st.columns([6, 4])  # 70% line chart, 30% bar chart
 
     with col1:
         st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
