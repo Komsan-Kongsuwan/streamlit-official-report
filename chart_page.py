@@ -110,10 +110,10 @@ def render_chart_page():
 
 
 
-    # --- Comparison Summary Inline (8 boxes in one line) ---
+    # --- Comparison Summary Inline (7 boxes in one line) ---
     st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
 
-    cols = st.columns(8)  # 🔹 exactly 8 boxes in one row
+    cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
         <div style="border:1px solid #ccc; border-radius:6px; padding:6px;
