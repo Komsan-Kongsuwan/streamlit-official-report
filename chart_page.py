@@ -17,17 +17,17 @@ def render_chart_page():
     """, unsafe_allow_html=True)
 
 
-st.markdown("""
-        <style>
-            /* Sidebar button styling */
-            [data-testid="stSidebar"] button {
-                font-size: 12px !important;  /* smaller font */
-                padding: 2px 6px !important; /* smaller padding */
-                height: 28px !important;     /* shorter button height */
-                border-radius: 6px !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    st.markdown("""
+            <style>
+                /* Sidebar button styling */
+                [data-testid="stSidebar"] button {
+                    font-size: 12px !important;  /* smaller font */
+                    padding: 2px 6px !important; /* smaller padding */
+                    height: 28px !important;     /* shorter button height */
+                    border-radius: 6px !important;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
 
     
