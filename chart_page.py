@@ -23,15 +23,6 @@ def render_chart_page():
     df_raw = st.session_state["official_data"].copy()
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
-
-
-
-    # ✅ Normalize Year and Month before creating Period
-    df_raw['Year'] = df_raw['Year'].astype(int).astype(str)
-    df_raw['Month'] = df_raw['Month'].astype(int).astype(str).str.zfill(2)
-    df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
-
-    
     
     # --- Sidebar: Site selection ---
     sites = sorted(df_raw['Site'].dropna().unique())
