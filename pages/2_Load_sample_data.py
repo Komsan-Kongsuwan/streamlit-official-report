@@ -31,5 +31,4 @@ def load_sample_data():
     return df
 
 # --- In your Streamlit page ---
-if st.button("📂 Load Sample Data"):
-    df_raw = load_sample_data()
+df_raw = load_sample_data()
