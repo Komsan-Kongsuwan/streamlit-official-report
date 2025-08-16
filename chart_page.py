@@ -19,34 +19,35 @@ def render_chart_page():
 
 
 
+    
+    # --- Sidebar: Compact site buttons ---
+    st.sidebar.markdown("### Sites")
+    
+    # Inject CSS to remove button div margin and reduce button padding/height
     st.markdown("""
         <style>
-            /* Target only sidebar site buttons */
-            section[data-testid="stSidebar"] div.stButton > button {
-                font-size: 12px !important;
-                padding: 0.1rem 0.25rem !important;
-                height: auto !important;      /* let it shrink naturally */
-                min-height: 40px !important;  /* force smaller baseline */
-                border-radius: 6px !important;
-                line-height: 1.2 !important;
-            }
-    
-            /* Also shrink the <p> text inside */
-            section[data-testid="stSidebar"] div.stButton p {
-                font-size: 12px !important;
-                margin: 0 !important;
-            }
+        /* Remove vertical gap between sidebar buttons */
+        section[data-testid="stSidebar"] div.stButton {
+            margin-top: 1px !important;
+            margin-bottom: 1px !important;
+            padding: 0 !important;
+        }
+        /* Reduce button font, padding, and height */
+        section[data-testid="stSidebar"] div.stButton > button {
+            font-size: 9px !important;
+            padding: 2px 6px !important;
+            height: 18px !important;
+            line-height: 1 !important;
+            border-radius: 4px !important;
+        }
         </style>
     """, unsafe_allow_html=True)
-
-
     
-        /* Remove vertical gaps between sidebar buttons */
-    section[data-testid="stSidebar"] div.stButton {
-        margin-top: 0px !important;
-        margin-bottom: 0px !important;
-        padding: 0 !important;
-    }
+    # Render buttons
+    for site in sites:
+        if st.sidebar.button(site, key=f"btn_{site}"):
+            st.session_state.selected_site = site
+
 
     
     if "official_data" not in st.session_state:
