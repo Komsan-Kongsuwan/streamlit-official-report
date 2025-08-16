@@ -28,7 +28,7 @@ def render_chart_page():
                 height: auto !important;      /* let it shrink naturally */
                 min-height: 30px !important;  /* force smaller baseline */
                 border-radius: 6px !important;
-                line-height: 0.5 !important;
+                line-height: 0.1 !important;
             }
     
             /* Also shrink the <p> text inside */
