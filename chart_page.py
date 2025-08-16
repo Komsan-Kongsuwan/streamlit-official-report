@@ -15,13 +15,6 @@ def render_chart_page():
             }
         </style>
     """, unsafe_allow_html=True)
-    
-    st.markdown("""
-        <h4 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
-            (f"### 🕵️‍♂️ Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
-        </h4>
-    """, unsafe_allow_html=True)
-
 
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
@@ -114,6 +107,11 @@ def render_chart_page():
 
 
     # --- Comparison Summary Inline (7 boxes in one line) ---
+    st.markdown("""
+        <h4 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
+            (f"### 🕵️‍♂️ {site} Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
+        </h4>
+    """, unsafe_allow_html=True)
     cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
