@@ -8,7 +8,7 @@ def render_chart_page():
     st.markdown("""
         <style>
             .block-container {
-                padding-top: 2.2rem;
+                padding-top: 2.1rem;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -37,7 +37,6 @@ def render_chart_page():
             st.session_state.selected_site = site
 
     site_code = st.session_state.selected_site
-    st.subheader(f"📊 Analysis for site: **{site_code}**")
 
     # --- Filter data ---
     df_raw = df_raw[df_raw['Site'] == site_code]
@@ -108,8 +107,6 @@ def render_chart_page():
             "Rating": rating
         })
 
-    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%b %Y')} vs {latest_month.strftime('%b %Y')}")
-
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
@@ -137,7 +134,6 @@ def render_chart_page():
     col1, col2 = st.columns([6, 4])  # 70% line chart, 30% bar chart
 
     with col1:
-        st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
         line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
         fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', markers=True)
@@ -149,7 +145,6 @@ def render_chart_page():
         st.plotly_chart(fig_line, use_container_width=True)
     
     with col2:
-        st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
         bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
         fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', text_auto='.2s')
