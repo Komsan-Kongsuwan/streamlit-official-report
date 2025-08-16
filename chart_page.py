@@ -14,19 +14,13 @@ def render_chart_page():
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
 
-    # --- Sidebar: Single selection buttons in scrollable slicer ---
-
-
+    # --- Sidebar: Site selection ---
     sites = sorted(df_raw['Site'].dropna().unique())
-
     if "selected_site" not in st.session_state:
         st.session_state.selected_site = sites[0]
-
-    st.sidebar.markdown('<div class="site-button-container">', unsafe_allow_html=True)
     for site in sites:
         if st.sidebar.button(site, use_container_width=True):
             st.session_state.selected_site = site
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
     site_code = st.session_state.selected_site
     st.subheader(f"📊 Analysis for site: **{site_code}**")
@@ -44,7 +38,6 @@ def render_chart_page():
     df_selected = df_raw[df_raw['Item Detail'].isin(item_order)].copy()
     latest_month = df_selected['Period'].max()
     prior_month = latest_month - pd.DateOffset(months=1)
-
     cost_items = {"[1049]-Cost Total", "[1046]-Variable Cost", "[1048]-Fix Cost", "[1051]-Expense Total"}
 
     def get_star_rating(is_cost=False, this_month_val=0, last_month_val=0):
@@ -84,11 +77,9 @@ def render_chart_page():
         pct = (diff / last_month_val * 100) if last_month_val != 0 else 0
         is_cost = item in cost_items
         rating = get_star_rating(is_cost=is_cost, this_month_val=this_month_val, last_month_val=last_month_val)
-
-        if is_cost:
-            arrow, color = ("▲", "red") if this_month_val > last_month_val else ("▼", "green")
-        else:
-            arrow, color = ("▲", "green") if this_month_val > last_month_val else ("▼", "red")
+        arrow, color = ("▲", "red") if (is_cost and this_month_val > last_month_val) else \
+                       ("▼", "green") if is_cost else \
+                       ("▲", "green") if this_month_val > last_month_val else ("▼", "red")
 
         comparison_data.append({
             "Item": item.split("]-")[-1],
@@ -103,44 +94,46 @@ def render_chart_page():
             "Rating": rating
         })
 
-    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
+    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%b %Y')} vs {latest_month.strftime('%b %Y')}")
+
     row_chunks = [comparison_data[i:i+4] for i in range(0, len(comparison_data), 4)]
     for row in row_chunks:
         cols = st.columns(4)
         for col, data in zip(cols, row):
             col.markdown(f"""
-            <div style="border:2px solid #ccc; border-radius:12px; padding:15px; background-color:#f9f9f9; box-shadow: 2px 2px 6px rgba(0,0,0,0.1);">
-                <h5 style="margin-bottom:8px; color:#333;">
-                    {data['Item']} {data['Rating']}
-                </h5>
-                <p style="margin:2px 0;"><b>{data['Month2']}:</b> <span style="color:green;">{data['Previous']}</span></p>
-                <p style="margin:2px 0;"><b>{data['Month1']}:</b> <span style="color:blue;">{data['Current']}</span></p>
-                <p style="margin-top:8px; color:{data['Color']}; font-weight:bold;">
+            <div style="border:1px solid #aaa; border-radius:8px; padding:8px; 
+                        background-color:#fdfdfd; font-size:12px; line-height:1.2;">
+                <b style="color:#333;">{data['Item']} {data['Rating']}</b><br>
+                <span style="color:green;">{data['Month2']}:</span> {data['Previous']}<br>
+                <span style="color:blue;">{data['Month1']}:</span> {data['Current']}<br>
+                <span style="color:{data['Color']}; font-weight:bold;">
                     {data['Arrow']} {data['Pct']} = {data['Diff']}
-                </p>
+                </span>
             </div>
             """, unsafe_allow_html=True)
 
-    # --- Line Chart ---
+    # --- Line & Bar Chart Side by Side ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail Chart", items, default=["[1045]-Revenue Total"])
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
-
     selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
-    st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
 
-    line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
+    col1, col2 = st.columns(2)
 
-    fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', title="Monthly", markers=True)
-    st.plotly_chart(fig_line, use_container_width=True)
+    with col1:
+        st.markdown(f"### 📈 {', '.join(selected_items_display)} - Line Chart")
+        line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
+            .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
+        fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', markers=True)
+        fig_line.update_layout(height=300, margin=dict(l=20, r=20, t=40, b=20))
+        st.plotly_chart(fig_line, use_container_width=True)
 
-    # --- Bar Chart ---
-    st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
-    bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
-        .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
-
-    fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', title="Yearly", text_auto='.2s')
-    st.plotly_chart(fig_bar, use_container_width=True)
+    with col2:
+        st.markdown(f"### 📊 {', '.join(selected_items_display)} - Bar Chart")
+        bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
+            .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
+        fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', text_auto='.2s')
+        fig_bar.update_layout(height=300, margin=dict(l=20, r=20, t=40, b=20))
+        st.plotly_chart(fig_bar, use_container_width=True)
