@@ -14,9 +14,9 @@ def render_chart_page():
     """, unsafe_allow_html=True)
 
     st.markdown("""
-        <h3 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
+        <h6 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
             🕵️‍♂️ Official Report Analysis
-        </h3>
+        </h6>
     """, unsafe_allow_html=True)
 
 
