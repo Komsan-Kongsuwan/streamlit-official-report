@@ -188,15 +188,23 @@ if uploaded_files:
         wb.save(final_buffer)
         final_buffer.seek(0)
 
-        st.download_button(
-            label="📥 Download Official Monthly Report",
-            data=final_buffer,
-            file_name="official_monthly_report.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
     df_pivot, df_raw = generate_official_report(uploaded_files)
-    format_and_download(df_pivot)
+    
+    # ✅ Download pivot report
+    format_and_download(df_pivot) 
 
     # 👉 Save to session for use in Chart page
     st.session_state["official_data"] = df_raw
+
+    # ✅ Add raw data download
+    raw_buffer = io.BytesIO()
+    with pd.ExcelWriter(raw_buffer, engine='openpyxl') as writer:
+        df_raw.to_excel(writer, index=False, sheet_name="Raw Data")
+    raw_buffer.seek(0)
+
+    st.download_button(
+        label="📥 Download Raw Data",
+        data=raw_buffer,
+        file_name="official_raw_data.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
