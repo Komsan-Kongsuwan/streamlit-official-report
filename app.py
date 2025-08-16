@@ -15,7 +15,7 @@ st.title("📊 Official Monthly Report")
 uploaded_files = st.file_uploader("📤 Upload .xlsx files", type="xlsx", accept_multiple_files=True)
 
 if uploaded_files:
-    st.success("✅ Files uploaded. Generating report...")
+    st.success("✅ Generating data complete, please go to Visualization page.")
 
     def generate_official_report(files):
         df_list = []
