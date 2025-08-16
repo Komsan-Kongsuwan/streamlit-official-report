@@ -23,7 +23,7 @@ def render_chart_page():
         <style>
             /* Target only sidebar site buttons */
             section[data-testid="stSidebar"] div.stButton > button {
-                font-size: 12px !important;
+                font-size: 14px !important;
                 padding: 0.1rem 0.25rem !important;
                 height: auto !important;      /* let it shrink naturally */
                 min-height: 22px !important;  /* force smaller baseline */
