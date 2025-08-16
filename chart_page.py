@@ -21,9 +21,9 @@ def render_chart_page():
             <style>
                 /* Sidebar button styling */
                 [data-testid="stSidebar"] button {
-                    font-size: 12px !important;  /* smaller font */
+                    font-size: 10px !important;  /* smaller font */
                     padding: 2px 6px !important; /* smaller padding */
-                    height: 28px !important;     /* shorter button height */
+                    height: 20px !important;     /* shorter button height */
                     border-radius: 6px !important;
                 }
             </style>
