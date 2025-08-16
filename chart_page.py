@@ -17,29 +17,48 @@ def render_chart_page():
     """, unsafe_allow_html=True)
 
     if "official_data" not in st.session_state:
-        st.warning("⚠️ Official data not found. Generate the official report first.")
+        st.warning("⚠️ Official data not found. Generate the official report or load sample data first.")
         st.stop()
 
+    # --- Prepare data safely ---
     df_raw = st.session_state["official_data"].copy()
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
 
-    # ✅ Normalize Year/Month before creating Period
-    df_raw['Year'] = df_raw['Year'].astype(int).astype(str)
-    df_raw['Month'] = df_raw['Month'].astype(int).astype(str).str.zfill(2)
-    df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
-    
-    # --- Sidebar: Site selection ---
-    sites = sorted(df_raw['Site'].dropna().unique())
-    if "selected_site" not in st.session_state:
+    # ✅ Normalize Year/Month before creating Period (handles int/float from Excel)
+    df_raw['Year'] = df_raw['Year'].astype(float).astype(int).astype(str)
+    df_raw['Month'] = df_raw['Month'].astype(float).astype(int).astype(str).str.zfill(2)
+    df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m", errors='coerce')
+
+    # --- Sites list & resilient selection ---
+    sites = sorted([s for s in df_raw['Site'].dropna().unique().tolist() if str(s).strip() != ""])
+    if not sites:
+        st.error("No sites found in the current data.")
+        st.stop()
+
+    # Create a simple signature of current dataset to detect data switches
+    data_signature = (tuple(sites), df_raw['Period'].min(), df_raw['Period'].max())
+    if st.session_state.get("data_signature") != data_signature:
+        # Dataset changed → reset selected site to first
+        st.session_state["data_signature"] = data_signature
+        st.session_state["selected_site"] = sites[0]
+
+    # Initialize or repair selection if missing/out-of-range
+    if "selected_site" not in st.session_state or st.session_state.selected_site not in sites:
         st.session_state.selected_site = sites[0]
+
+    # --- Sidebar: Site navigate buttons ---
+    st.sidebar.markdown("### Sites")
     for site in sites:
         if st.sidebar.button(site, use_container_width=True):
             st.session_state.selected_site = site
 
     site_code = st.session_state.selected_site
 
-    # --- Filter data ---
-    df_raw = df_raw[df_raw['Site'] == site_code]
+    # --- Filter data for selected site ---
+    df_site = df_raw[df_raw['Site'] == site_code].copy()
+    if df_site.empty:
+        st.info(f"No data for selected site: {site_code}")
+        st.stop()
 
     # --- Monthly Comparison Summary ---
     item_order = [
@@ -48,9 +67,21 @@ def render_chart_page():
         "[1050]-Gross Profit",
         "[1051]-Expense Total", "[1052]-Operate Profit"
     ]
-    df_selected = df_raw[df_raw['Item Detail'].isin(item_order)].copy()
+    df_selected = df_site[df_site['Item Detail'].isin(item_order)].copy()
+
+    # Choose latest/prior months safely
     latest_month = df_selected['Period'].max()
-    prior_month = latest_month - pd.DateOffset(months=1)
+    if pd.isna(latest_month):  # if summary rows missing, fall back to any available month for the site
+        latest_month = df_site['Period'].max()
+
+    if pd.isna(latest_month):
+        st.info("No valid Period values in data.")
+        st.stop()
+
+    # If there is no real previous month in data, we still show comparison vs prior calendar month (values will be 0)
+    prior_in_data = df_selected[df_selected['Period'] < latest_month]['Period'].max()
+    prior_month = prior_in_data if pd.notna(prior_in_data) else (latest_month - pd.DateOffset(months=1))
+
     cost_items = {"[1046]-Variable Cost", "[1048]-Fix Cost", "[1051]-Expense Total"}
 
     def get_star_rating(is_cost=False, this_month_val=0, last_month_val=0):
@@ -110,7 +141,7 @@ def render_chart_page():
     # --- Comparison Summary Inline (7 boxes in one line) ---
     st.markdown(f"""
         <h3 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
-            Site : {st.session_state.selected_site} - Visualize Revenue/Cost/Profit - {latest_month.strftime('%B %Y')}
+            Site : {site_code} - Visualize Revenue/Cost/Profit - {latest_month.strftime('%B %Y')}
         </h3>
     """, unsafe_allow_html=True)
 
@@ -135,28 +166,27 @@ def render_chart_page():
         """, unsafe_allow_html=True)
 
     # --- Line & Bar Chart Side by Side (70:30 layout) ---
-    items = sorted(df_raw['Item Detail'].dropna().unique())
+    items = sorted(df_site['Item Detail'].dropna().unique())
     selected_items = st.multiselect("Select Item Detail Chart", items, default=["[1045]-Revenue Total"])
     if not selected_items:
         st.info("Select at least one item.")
         st.stop()
-    selected_items_display = [item.split(']-', 1)[-1] for item in selected_items]
 
     col1, col2 = st.columns([6, 4])  # 70% line chart, 30% bar chart
 
     with col1:
-        line_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
+        line_df = df_site[df_site['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Period'], as_index=False)['Amount'].sum()
         fig_line = px.line(line_df, x='Period', y='Amount', color='Item Detail', markers=True)
         fig_line.update_layout(
             height=320,
             margin=dict(l=10, r=10, t=40, b=20),
-            showlegend=False  # 🔹 remove legend
+            showlegend=False
         )
         st.plotly_chart(fig_line, use_container_width=True)
     
     with col2:
-        bar_df = df_raw[df_raw['Item Detail'].isin(selected_items)] \
+        bar_df = df_site[df_site['Item Detail'].isin(selected_items)] \
             .groupby(['Item Detail', 'Year'], as_index=False)['Amount'].sum()
         fig_bar = px.bar(bar_df, x='Year', y='Amount', color='Item Detail', text_auto='.2s')
         fig_bar.update_layout(height=320, margin=dict(l=10, r=10, t=40, b=20))
