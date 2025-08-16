@@ -171,7 +171,7 @@ def render_chart_page():
         col.markdown(f"""
         <div style="border:1px solid #ccc; border-radius:6px; padding:6px;
                     background-color:#f9f9f9; box-shadow:1px 1px 3px rgba(0,0,0,0.1);
-                    font-size:11px;">
+                    font-size:12px;">
             <p style="font-size:10px; font-weight:bold; margin-bottom:4px; color:#333;">
                 {data['Item']} {data['Rating']}
             </p>
