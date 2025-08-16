@@ -112,7 +112,7 @@ def render_chart_page():
 
     st.markdown(f"""
         <h3 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
-            Site : {st.session_state.selected_site} Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}
+            Site : {st.session_state.selected_site} - Visualize Revenue/Cost/Profit
         </h3>
     """, unsafe_allow_html=True)
 
