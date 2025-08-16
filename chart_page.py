@@ -21,18 +21,24 @@ def render_chart_page():
 
     st.markdown("""
         <style>
-            /* Reduce spacing of sidebar buttons */
+            /* Compact sidebar button container */
             section[data-testid="stSidebar"] div.stButton {
-                margin: 2px 0 !important;      /* vertical gap between buttons */
-                padding: 0 !important;         /* remove extra padding from container */
+                margin: 1px 0 !important;     /* very small vertical gap */
+                padding: 0 !important;        /* remove extra padding */
             }
     
+            /* Compact button itself */
             section[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {
-                font-size: 10px !important;   /* smaller font */
-                padding: 2px 6px !important;  /* tighter padding inside button */
-                height: 20px !important;      /* shorter button height */
+                font-size: 9px !important;    /* smaller font */
+                padding: 1px 4px !important;  /* minimal padding */
+                height: 18px !important;      /* shorter button height */
                 line-height: 1 !important;
-                border-radius: 6px !important;
+                border-radius: 4px !important; /* small rounded corners */
+            }
+    
+            /* Optional: reduce markdown padding inside buttons */
+            section[data-testid="stSidebar"] div.stMarkdownContainer p {
+                margin: 0 !important;
             }
         </style>
     """, unsafe_allow_html=True)
