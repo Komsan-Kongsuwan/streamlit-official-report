@@ -69,7 +69,6 @@ def render_chart_page():
         st.session_state.selected_site = sites[0]
 
     # --- Sidebar: Site navigate buttons ---
-    st.sidebar.markdown("### Sites")
     for site in sites:
         if st.sidebar.button(site, use_container_width=True):
             st.session_state.selected_site = site
