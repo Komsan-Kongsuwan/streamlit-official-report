@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import pandas as pd
 
 # ✅ Button for using sample data
 if st.button("🧪 Use Sample Data"):
