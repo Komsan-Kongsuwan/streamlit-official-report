@@ -18,7 +18,7 @@ def render_chart_page():
     
     st.markdown("""
         <h4 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
-            🕵️‍♂️ Official Report Analysis
+            (f"### 🕵️‍♂️ Comparison {site} {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
         </h4>
     """, unsafe_allow_html=True)
 
@@ -114,8 +114,6 @@ def render_chart_page():
 
 
     # --- Comparison Summary Inline (7 boxes in one line) ---
-    st.markdown(f"### 🆗🆖 Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")
-
     cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
