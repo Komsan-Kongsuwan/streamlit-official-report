@@ -4,15 +4,18 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page():
-    # Reduce top margin/padding of the page
+    # --- Reduce top and side margins/paddings of the page ---
     st.markdown("""
         <style>
             .block-container {
-                padding-top: 2.1rem;
+                padding-top: 1rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                padding-bottom: 0rem;
             }
         </style>
     """, unsafe_allow_html=True)
-
+    
     st.markdown("""
         <h4 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
             🕵️‍♂️ Official Report Analysis
