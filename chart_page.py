@@ -125,7 +125,7 @@ def render_chart_page():
             <h5 style="font-size:12px; margin-bottom:1px; color:#333;">
                 {data['Item']} {data['Rating']}
             </h5>
-            <p style="margin:2px 0; font-size:11px;"><b>{data['Month2']}:</b> 
+            <p style="margin:2px 0 0 0; font-size:11px;"><b>{data['Month2']}:</b> 
                 <span style="color:green;">{data['Previous']}</span></p>
             <p style="margin:2px 0; font-size:11px;"><b>{data['Month1']}:</b> 
                 <span style="color:blue;">{data['Current']}</span></p>
