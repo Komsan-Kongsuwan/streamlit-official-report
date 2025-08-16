@@ -27,7 +27,7 @@ def load_sample_data():
 
     progress.progress(100, text="✅ Done!")
 
-    st.success("Sample data loaded successfully.")
+    st.success("Sample data loaded successfully, Please go to Visualization page.")
     return df
 
 # --- In your Streamlit page ---
