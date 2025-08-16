@@ -18,18 +18,18 @@ def render_chart_page():
 
 
     st.markdown("""
-            <style>
-                /* Sidebar button styling */
-                [data-testid="stSidebar"] button {
-                    font-size: 10px !important;  /* smaller font */
-                    padding: 2px 6px !important; /* smaller padding */
-                    height: 10px !important;     /* shorter button height */
-                    border-radius: 6px !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+        <style>
+            /* Sidebar buttons */
+            div[data-testid="stSidebar"] div.stButton > button {
+                font-size: 10px !important;   /* smaller font */
+                padding: 2px 6px !important;  /* tighter padding */
+                height: 24px !important;      /* shorter height */
+                border-radius: 6px !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
-
+    
     
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report or load sample data first.")
