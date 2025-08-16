@@ -1,7 +1,7 @@
 import os
 
 # ✅ Button for using sample data
-if st.button("Use_Sample_Data"):
+if st.button("🧪 Use Sample Data"):
     sample_file = os.path.join(os.getcwd(), "official_raw_data.xlsx")
     if os.path.exists(sample_file):
         df_sample = pd.read_excel(sample_file)
