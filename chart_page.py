@@ -13,7 +13,12 @@ def render_chart_page():
         </style>
     """, unsafe_allow_html=True)
 
-    st.title("🕵️‍♂️ Official Report Analysis")
+    st.markdown("""
+        <h2 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
+            🕵️‍♂️ Official Report Analysis
+        </h2>
+    """, unsafe_allow_html=True)
+
 
     if "official_data" not in st.session_state:
         st.warning("⚠️ Official data not found. Generate the official report first.")
