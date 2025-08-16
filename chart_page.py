@@ -19,6 +19,10 @@ def render_chart_page():
 
 
 
+    # --- Sidebar: Compact Site Navigate Buttons ---
+    st.sidebar.markdown("### Sites")
+    
+    # --- Compact button style ---
     st.markdown("""
         <style>
             /* Compact sidebar button container */
@@ -36,12 +40,16 @@ def render_chart_page():
                 border-radius: 4px !important; /* small rounded corners */
             }
     
-            /* Optional: reduce markdown padding inside buttons */
+            /* Reduce markdown inside buttons */
             section[data-testid="stSidebar"] div.stMarkdownContainer p {
                 margin: 0 !important;
             }
         </style>
     """, unsafe_allow_html=True)
+    
+    for site in sites:
+        if st.sidebar.button(site, use_container_width=True):
+            st.session_state.selected_site = site
 
 
     
