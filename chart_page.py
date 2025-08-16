@@ -22,6 +22,10 @@ def render_chart_page():
 
     df_raw = st.session_state["official_data"].copy()
     df_raw['Amount'] = pd.to_numeric(df_raw['Amount'], errors='coerce').fillna(0)
+
+    # ✅ Normalize Year/Month before creating Period
+    df_raw['Year'] = df_raw['Year'].astype(int).astype(str)
+    df_raw['Month'] = df_raw['Month'].astype(int).astype(str).str.zfill(2)
     df_raw['Period'] = pd.to_datetime(df_raw['Year'] + "-" + df_raw['Month'], format="%Y-%m")
     
     # --- Sidebar: Site selection ---
@@ -103,20 +107,13 @@ def render_chart_page():
             "Rating": rating
         })
 
-
-
-
     # --- Comparison Summary Inline (7 boxes in one line) ---
-    #st.markdown(f"### 🆗🆖 {st.session_state.selected_site} Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")    
-
-
     st.markdown(f"""
         <h3 style='margin-top:0; margin-bottom:0.5rem; color:#333;'>
             Site : {st.session_state.selected_site} - Visualize Revenue/Cost/Profit - {latest_month.strftime('%B %Y')}
         </h3>
     """, unsafe_allow_html=True)
 
-    
     cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
@@ -136,11 +133,6 @@ def render_chart_page():
         </div>
         <br>
         """, unsafe_allow_html=True)
-
-
-
-
-    
 
     # --- Line & Bar Chart Side by Side (70:30 layout) ---
     items = sorted(df_raw['Item Detail'].dropna().unique())
