@@ -161,9 +161,9 @@ def render_chart_page():
 
     # --- Comparison Summary Inline (7 boxes in one line) ---
     st.markdown(f"""
-        <h6 style='margin-top:0; margin-bottom:0rem; color:#333;'>
+        <h3 style='margin-top:0; margin-bottom:0rem; color:#333;'>
             Site : {site_code} - Visualize Revenue/Cost/Profit - {latest_month.strftime('%B %Y')}
-        </h6>
+        </h3>
     """, unsafe_allow_html=True)
 
     cols = st.columns(7)  # 🔹 exactly 7 boxes
