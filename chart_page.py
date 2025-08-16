@@ -107,7 +107,7 @@ def render_chart_page():
 
 
     # --- Comparison Summary Inline (7 boxes in one line) ---
-    st.markdown(f"### 🆗🆖 {site} Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")    
+    st.markdown(f"### 🆗🆖 {selected_site} Comparison {prior_month.strftime('%B %Y')} vs {latest_month.strftime('%B %Y')}")    
     cols = st.columns(7)  # 🔹 exactly 7 boxes
     for col, data in zip(cols, comparison_data):
         col.markdown(f"""
