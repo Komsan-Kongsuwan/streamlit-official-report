@@ -21,11 +21,13 @@ def render_chart_page():
 
     st.markdown("""
         <style>
-            section[data-testid="stSidebar"] .css-1abcde {
-                font-size: 10px !important;
-                height: 24px !important;
-                padding: 2px 6px !important;
+            /* Style all sidebar site buttons */
+            section[data-testid="stSidebar"] button[data-testid="stBaseButton-secondary"] {
+                font-size: 8px !important;   /* smaller font size */
+                padding: 2px 6px !important;  /* tighter padding */
+                height: 10px !important;      /* shorter button height */
                 border-radius: 6px !important;
+                line-height: 1 !important;
             }
         </style>
     """, unsafe_allow_html=True)
