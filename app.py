@@ -194,20 +194,7 @@ if uploaded_files:
             file_name="official_monthly_report.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-  
-
-
-
-        st.download_button(
-            label="📥 Download df_raw",
-            data=df_raw,
-            file_name="df_raw.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
-    
-
-    
+      
     df_pivot, df_raw = generate_official_report(uploaded_files)
     format_and_download(df_pivot)
 
