@@ -4,6 +4,15 @@ import pandas as pd
 import plotly.express as px
 
 def render_chart_page():
+    # Reduce top margin/padding of the page
+    st.markdown("""
+        <style>
+            .block-container {
+                padding-top: 0rem;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     st.title("🕵️‍♂️ Official Report Analysis")
 
     if "official_data" not in st.session_state:
